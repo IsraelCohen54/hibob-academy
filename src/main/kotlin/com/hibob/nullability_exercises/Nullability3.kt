@@ -1,0 +1,27 @@
+package com.hibob.bootcamp
+
+
+/**
+ * Write an extension function nullSafeToUpper() for String? that converts the string
+ * to uppercase if it is not null, or returns "NO TEXT PROVIDED" if it is null.
+ * Apply this function in the main function to handle the variable text.
+ *
+ **/
+
+fun String?.nullSafeToUpper(): String
+{
+    this?.let{
+        return this.uppercase()
+    }
+    return "NO TEXT PROVIDED"
+}
+
+fun main() {
+    // Task: Create and use an extension function to print text in uppercase if it's not null, or "NO TEXT PROVIDED" if it is null.
+    val text: String? = "Learn Kotlin"
+    println(text.nullSafeToUpper())
+
+    val nullText: String? = null
+    println(nullText.nullSafeToUpper())
+}
+
