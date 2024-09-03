@@ -1,7 +1,9 @@
+package com.hibob.nullability_exercises
+
 /**
  * Iterate through the list of products.
  * Use the ?.let function to safely access the name and price of each product.
- * Print the product details only if both name and price are non-null. Format the output as "Product: [name] - $[price]".
+ * Print the product details only if both name and price are non-null. Format the output as "com.hibob.nullability_exercises.Product: [name] - $[price]".
  * If either name or price is null, do not print anything for that product.
  *
  */
@@ -19,7 +21,7 @@ fun main() {
     products.forEach { product ->
         (product.name?.let {
             (product.price?.let {
-                println("Product: [${product.name}] - $[${product.price}]")
+                println("com.hibob.nullability_exercises.Product: [${product.name}] - $[${product.price}]")
             })
         })
     }

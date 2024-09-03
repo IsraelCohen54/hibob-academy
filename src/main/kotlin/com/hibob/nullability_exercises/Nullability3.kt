@@ -1,4 +1,4 @@
-package com.hibob.bootcamp
+package com.hibob.nullability_exercises
 
 
 /**

@@ -1,10 +1,12 @@
+package com.hibob.nullability_exercises
+
 /**
  *
  * Iterate through the list of customers, which may contain null entries.
  * For each non-null customer, print the customer's name or "Name Unknown" if the name is null.
- * Print the account ID or "Account ID Unknown" if the account or ID is null.
+ * Print the account ID or "com.hibob.nullability_exercises.Account ID Unknown" if the account or ID is null.
  * Print the account balance or "Balance Not Available" if the account details or balance is null.
- * If the customer object itself is null, print "Customer data is not available."
+ * If the customer object itself is null, print "com.hibob.nullability_exercises.Customer data is not available."
  *
  */
 data class Customer(val name: String?, val account: Account?)
@@ -28,15 +30,15 @@ fun main() {
     // Task: Print each customer's name, account ID, and account balance. Handle all null cases appropriately.
     customers.forEach { customer ->
         if (customer == null) {
-            println("Customer data is not available.")
+            println("com.hibob.nullability_exercises.Customer data is not available.")
         } else {
             val name = customer.name ?: "Name Unknown"
-            val accountId = customer.account?.id ?: "Account ID Unknown"
+            val accountId = customer.account?.id ?: "com.hibob.nullability_exercises.Account ID Unknown"
             val balance = customer.account?.details?.balance?.toString() ?: "Balance Not Available"
 
-            println("Customer Name: $name")
-            println("Account ID: $accountId")
-            println("Account Balance: $balance")
+            println("com.hibob.nullability_exercises.Customer Name: $name")
+            println("com.hibob.nullability_exercises.Account ID: $accountId")
+            println("com.hibob.nullability_exercises.Account Balance: $balance")
         }
     }
 

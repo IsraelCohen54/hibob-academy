@@ -1,3 +1,5 @@
+package com.hibob.nullability_exercises
+
 data class Department(val name: String?, val manager: EmployeeDetails?)
 data class EmployeeDetails(val name: String?, val contactInfo: ContactInfo?)
 data class ContactInfo(val email: String?, val phone: String?)
@@ -16,7 +18,7 @@ fun main() {
     departments.forEach { department ->
         val departmentName = department.name ?: "no department name received"
         val managerInfo = department.manager?.let { manager ->
-            val employeeName = manager.name ?: "no EmployeeDetails name received"
+            val employeeName = manager.name ?: "no com.hibob.nullability_exercises.EmployeeDetails name received"
             val contactInfo = manager.contactInfo?.let { contact ->
                 val email = contact.email ?: "no manager email received"
                 val phone = contact.phone ?: "no manager phone received"

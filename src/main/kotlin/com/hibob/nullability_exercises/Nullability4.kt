@@ -1,4 +1,4 @@
-package com.hibob.bootcamp
+package com.hibob.nullability_exercises
 
 /**
  * Modify the main function to iterate over the employees list and print each employee's city.
