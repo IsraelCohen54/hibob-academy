@@ -5,9 +5,9 @@ fun isContainDolarSymbol(s: String): Boolean = "$" !in s
 fun isContainOnlyNumbers(s: String): Boolean {
     var numberOnly = true
     for (char in s) {
-        if (char <= '9' && char >= '0') continue else numberOnly = false
+        if (char in '0'..'9') continue else numberOnly = false
     }
-    if (numberOnly) return false else return true
+    return !numberOnly
 }
 
 fun isValidIdentifier(s: String): Boolean {
@@ -17,12 +17,12 @@ fun isValidIdentifier(s: String): Boolean {
     }
 
     // is first char start with number
-    if (s[0] <= '9' && s[0] >= '0') {
+    if (s[0] in '0'..'9') {
         return false
     }
 
     val res = isContainOnlyNumbers(s)
-    if (res == false) return false
+    if (!res) return false
 
     return isContainDolarSymbol(s)
 }
