@@ -15,16 +15,14 @@ import java.time.LocalDate
 data object Recipients
 
 class Store (products: List<Product>, val day: LocalDate) {
-    var isOpen : Boolean = when(LocalDate.now().dayOfWeek){
-        DayOfWeek.SATURDAY -> false
-        else -> true
-    }
+    var isOpen : Boolean = LocalDate.now().dayOfWeek != DayOfWeek.SATURDAY
     val numOfProducts : Int = products.size
 
     private var accessCount: Int = 0
-    val recipients: Recipients by lazy {
+    val recipients: Recipients get() {
         accessCount++
         Recipients
+        return Recipients
     }
     lateinit var someInt: String
 }
