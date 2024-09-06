@@ -26,17 +26,9 @@ enum class CreditCardType { VISA, MASTERCARD, DISCOVER, AMERICAN_EXPRESS }
 sealed class Payment {
     data class CreditCard (val number: String, val expiryDate: LocalDate, val type: CreditCardType, val limit: Double) : Payment()
     data class PayPal(val email: String) : Payment()
-    class Cash : Payment() {
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
-        override fun hashCode(): Int {
-            return System.identityHashCode(this)
-        }
-    }
+    class Cash : Payment()
 }
 
 enum class Statuses { SUCCESS, FAILURE }
 
-data class Check(val employeeId: String, val status : Statuses, val total: Double) { }
+data class Check(val employeeId: String, val status : Statuses, val total: Double)
