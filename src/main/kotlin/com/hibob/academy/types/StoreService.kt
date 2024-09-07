@@ -2,17 +2,6 @@ package com.hibob.academy.types
 
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import Cart
-import Payment
-import Check
-import Statuses
-
-
-object Logger {
-    fun fail(message: String): Nothing? {
-        throw IllegalStateException(message)
-    }
-}
 
 @Component
 class StoreService {
@@ -26,6 +15,10 @@ class StoreService {
     companion object {
         private const val ZERO_TOTAL_COSTS_ON_FAILED_BUY = 0.0
         private const val VISA_LEGIT_NUM_LENGTH = 10
+
+        fun fail(message: String): Nothing? {
+            throw IllegalStateException(message)
+        }
     }
 
     private fun checkout(cart: Cart, payment: Payment): Check {
@@ -35,7 +28,7 @@ class StoreService {
 
         val status: Statuses = when(payment) {
             is Payment.Cash -> {
-                Logger.fail("payment is Cash")
+                fail("payment is Cash")
                 Statuses.FAILURE
             }
 
@@ -50,7 +43,6 @@ class StoreService {
             }
 
             is Payment.PayPal -> if (!payment.email.contains('@')) Statuses.FAILURE else Statuses.SUCCESS
-            else -> Statuses.FAILURE // todo delete, currently claims it's not exhaustive even though its sealed class
         }
     return Check(cart.clientId, status, if (status == Statuses.SUCCESS) totalPricesOfLegitProducts else ZERO_TOTAL_COSTS_ON_FAILED_BUY)
 }

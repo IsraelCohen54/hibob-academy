@@ -1,10 +1,5 @@
 package com.hibob.academy.types
 
-import Cart
-import Check
-import Product
-import Statuses
-import Payment
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions.*
@@ -74,7 +69,7 @@ class StoreServiceTest {
     @Test
     fun `pay method should failed in case of using cash`() {
         assertThrows(IllegalStateException::class.java) {
-            storeService.pay(listOf(cart1), Payment.Cash()) // todo ask why do I has to change it to ()?
+            storeService.pay(listOf(cart1), Payment.Cash)
         }
     }
 

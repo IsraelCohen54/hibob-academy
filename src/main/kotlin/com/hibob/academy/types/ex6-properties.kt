@@ -8,7 +8,6 @@ package com.hibob.academy.types
 // === (lazy, num of access, so I have to change property to var, ... func, use get() without lazy)
 //6. write vairable that initilize only when calling create method (lateinit var type int)
 
-import Product
 import java.time.DayOfWeek
 import java.time.LocalDate
 
