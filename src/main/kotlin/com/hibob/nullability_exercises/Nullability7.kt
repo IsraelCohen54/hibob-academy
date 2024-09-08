@@ -29,9 +29,7 @@ fun main() {
 
     // Task: Print each customer's name, account ID, and account balance. Handle all null cases appropriately.
     customers.forEach { customer ->
-        if (customer == null) {
-            println("com.hibob.nullability_exercises.Customer data is not available.")
-        } else {
+        customer?.let {
             val name = customer.name ?: "Name Unknown"
             val accountId = customer.account?.id ?: "com.hibob.nullability_exercises.Account ID Unknown"
             val balance = customer.account?.details?.balance?.toString() ?: "Balance Not Available"
@@ -39,7 +37,6 @@ fun main() {
             println("com.hibob.nullability_exercises.Customer Name: $name")
             println("com.hibob.nullability_exercises.Account ID: $accountId")
             println("com.hibob.nullability_exercises.Account Balance: $balance")
-        }
+        } ?: println("com.hibob.nullability_exercises.Customer data is not available.")
     }
-
 }

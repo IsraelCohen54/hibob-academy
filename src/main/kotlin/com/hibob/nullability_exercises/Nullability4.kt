@@ -18,7 +18,7 @@ fun main() {
         Employee("Alice", Address("Los Angeles", null))
     )
     // Task: Print each employee's city safely. If the city is not available, print "City Unknown".
-    employees.listIterator().forEach { employee ->
+    employees.forEach { employee ->
         println(employee.address?.city ?: "City Unknown")
     }
 }
