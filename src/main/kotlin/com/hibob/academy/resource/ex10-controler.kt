@@ -1,54 +1,64 @@
 package com.hibob.academy.resource
 
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.Response.Status
 import java.time.LocalDate
 
-@RestController
-@RequestMapping("/pets")
+@Path("/pets")
 class PetController {
 
     // GET request to retrieve pet type by ID
-    @GetMapping("/{petId}/type")
-    fun getPetType(@PathVariable petId: Long): ResponseEntity<String> {
+    @GET
+    @Path("/{petId}/type")
+    @Produces("application/json")
+    fun getPetType(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("No pet found")
+            Response.status(Status.NOT_FOUND).entity("No pet found").build()
         } else {
-            ResponseEntity.ok("parrot")
+            Response.ok("parrot").build()
         }
     }
 
     // POST request to create a new pet
-    @PostMapping
-    fun createPet(@RequestBody pet: Pet): ResponseEntity<String> {
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    fun createPet(pet: Pet): Response {
         // Simulate creation logic
-        return ResponseEntity.status(HttpStatus.CREATED).body("Pet ${pet.name} created successfully")
+        return Response.status(Status.CREATED).entity("Pet ${pet.name} created successfully").build()
     }
 
     // PUT request to update an existing pet
-    @PutMapping("/{petId}")
-    fun updatePet(@PathVariable petId: Long, @RequestBody pet: Pet): ResponseEntity<String> {
+    @PUT
+    @Path("/{petId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    fun updatePet(@PathParam("petId") petId: Long, pet: Pet): Response {
         return if (petId < 0) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("No pet found to update")
+            Response.status(Status.NOT_FOUND).entity("No pet found to update").build()
         } else {
-            ResponseEntity.ok("Pet ${petId} updated successfully")
+            Response.ok("Pet ${petId} updated successfully").build()
         }
     }
 
     // DELETE request to delete a pet by ID
-    @DeleteMapping("/{petId}")
-    fun deletePet(@PathVariable petId: Long): ResponseEntity<String> {
+    @DELETE
+    @Path("/{petId}")
+    @Produces("application/json")
+    fun deletePet(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("No pet found to delete")
+            Response.status(Status.NOT_FOUND).entity("No pet found to delete").build()
         } else {
-            ResponseEntity.ok("Pet ${petId} deleted successfully")
+            Response.ok("Pet ${petId} deleted successfully").build()
         }
     }
 
     // Example endpoint to throw an exception
-    @GetMapping("/error")
-    fun throwError(): ResponseEntity<String> {
+    @GET
+    @Path("/error")
+    @Produces("application/json")
+    fun throwError(): Response {
         throw RuntimeException("An error occurred")
     }
 }
