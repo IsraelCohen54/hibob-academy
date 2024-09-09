@@ -10,7 +10,7 @@ class PetController {
 
     // GET request to retrieve pet type by ID
     @GET
-    @Path("/{petId}/type")
+    @Path("/{petId}/{type}")
     @Produces("application/json")
     fun getPetType(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
@@ -63,7 +63,6 @@ class PetController {
     }
 }
 
-// Data class for Pet (for simplicity)
 data class Pet(
     val id: Long,
     val name: String,
