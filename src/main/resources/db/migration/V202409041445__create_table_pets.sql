@@ -1,14 +1,14 @@
 CREATE TABLE pets (
                       id SERIAL PRIMARY KEY,
-                      name VARCHAR(30) NOT NULL DEFAULT 'Unknown',
-                      type VARCHAR(15) NOT NULL DEFAULT 'Unknown',
-                      company_id BIGINT NOT NULL DEFAULT 0,
-                      date_of_arrival DATE NOT NULL DEFAULT CURRENT_DATE
+                      name VARCHAR(30) NOT NULL,
+                      type VARCHAR(15) NOT NULL,
+                      company_id BIGINT NOT NULL,
+                      date_of_arrival DATE DEFAULT CURRENT_DATE
 );
 
-CREATE INDEX idx_pets_table_with_company_id ON pets (company_id);
+CREATE INDEX idx_pets_with_company_id ON pets (company_id);
 
-/*
+
 INSERT INTO pets (name, type, company_id, date_of_arrival)
 VALUES ('Witi', 'Dog', 1, '2020-01-28');
 
@@ -29,4 +29,3 @@ WHERE id = 1;
 SELECT *
 FROM pets
 WHERE date_of_arrival < CURRENT_DATE - INTERVAL '1 year';
-*/
