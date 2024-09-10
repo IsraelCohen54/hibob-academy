@@ -3,6 +3,7 @@ package com.hibob.ex5_classes_exercise
 interface Location{}
 
 data class Us(val zipCode: Int) : Location {}
+
 data class Uk(val postalCode: Int) : Location {}
 
 data class LocationDetails(val street: String, val city: String, val county: String, val loc:Location) {}
