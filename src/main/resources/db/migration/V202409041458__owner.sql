@@ -6,6 +6,7 @@ CREATE TABLE owner (
 );
 
 CREATE INDEX idx_company_employee ON owner (company_id, employee_id);
+
 /*
 INSERT INTO owner (name, company_id, employee_id)
 VALUES ('Josh', '9', 123123123);

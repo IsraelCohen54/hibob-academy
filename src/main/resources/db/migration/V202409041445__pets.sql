@@ -21,6 +21,7 @@ VALUES ('Bobi', 'Dog', 2, '2023-02-24');
 SELECT * FROM pets
 WHERE type = 'Dog';
 
+
 -- Delete pet by ID (e.g., id = 1)
 DELETE FROM pets
 WHERE id = 1;
