@@ -8,7 +8,7 @@ CREATE TABLE pets (
 
 CREATE INDEX idx_pets_with_company_id ON pets (company_id);
 
-
+/*
 INSERT INTO pets (name, type, company_id, date_of_arrival)
 VALUES ('Witi', 'Dog', 1, '2020-01-28');
 
@@ -29,3 +29,4 @@ WHERE id = 1;
 SELECT *
 FROM pets
 WHERE date_of_arrival < CURRENT_DATE - INTERVAL '1 year';
+*/
