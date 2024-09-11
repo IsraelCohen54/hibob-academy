@@ -15,31 +15,28 @@ class OwnerDaoTest @Inject constructor(private val sql: DSLContext)  {
 
     private val table = OwnerTable()
     private val companyId = Random.nextLong()
-    private val oD = OwnerDao(sql)
+    private val ownerDao = OwnerDao(sql)
 
     @Test
-    fun `insert owner test`() {
-        val owner1 = OwnerDao.Owner("Bob1", companyId, "123")
-        oD.insertOwner("Bob1", companyId, "123")
-        val compareLists: List<OwnerDao.Owner?> = listOf(owner1)
-        assertEquals(compareLists, oD.getOwners(companyId))
-    }
-
-    @Test
-    fun `insert owner size test`() {
-        val owner1 = OwnerDao.Owner("Bob1", companyId, "123")
-        val owner2 = OwnerDao.Owner("Bob2", companyId, "124")
-        val owner3 = OwnerDao.Owner("Bob3", companyId, "125")
-        oD.insertOwner(owner1.name, companyId, owner1.employeeId)
-        oD.insertOwner(owner2.name, companyId, owner2.employeeId)
-        oD.insertOwner(owner3.name, companyId, owner3.employeeId)
-        assertEquals(3, oD.getOwners(companyId).size)
+    fun `insert owner`() {
+        val owner1 = Owner(1, "Bob1", companyId, "123")
+        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
+        val compareLists: List<Owner?> = listOf(owner1)
+        assertEquals(compareLists, ownerDao.getOwners(companyId))
     }
 
     @Test
     fun `get owner test without any owner`() {
-        val ownerVacantList : List<OwnerDao.Owner?> = emptyList()
-        assertEquals(ownerVacantList, oD.getOwners(companyId))
+        val ownerVacantList : List<Owner?> = emptyList()
+        assertEquals(ownerVacantList, ownerDao.getOwners(companyId))
+    }
+
+    @Test
+    fun `insert same owner - do not add to DB using conflict`() {
+        val owner1 = Owner(1, "Bob1", companyId, "123")
+        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
+        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
+        assertEquals(1,ownerDao.getOwners(companyId).size)
     }
 
     @BeforeEach

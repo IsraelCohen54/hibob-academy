@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import jakarta.inject.Inject
 import org.jooq.Record
 import org.jooq.RecordMapper
+import java.time.LocalDate
 
 // todo dao create update + tests pr 1 + test the fetch from yesterday)
 //
@@ -12,52 +13,33 @@ import org.jooq.RecordMapper
 @Component
 class PetDao @Inject constructor(private val sql: DSLContext) {
 
-    private val petTableInstance = PetTable.petInstance
+    private val petTable = PetTable.petInstance
 
     private val petTableMapper = RecordMapper<Record, Pet> { record ->
         Pet(
-            // id = record[petTableInstance.id],
-            name = record[petTableInstance.name],
-            type = record[petTableInstance.type],
-            companyId = record[petTableInstance.companyId],
-            dateOfArrival = record[petTableInstance.dateOfArrival]//.substring(0,3)
+            id = record[petTable.id],
+            name = record[petTable.name],
+            type = record[petTable.type],
+            companyId = record[petTable.companyId],
+            dateOfArrival = record[petTable.dateOfArrival]
         )
     }
 
-
-    fun createPet(name: String, type: String, companyId: Long, dateOfArrival: java.sql.Date) {
-        sql.insertInto(petTableInstance)
-            .columns(petTableInstance.name, petTableInstance.type, petTableInstance.companyId, petTableInstance.dateOfArrival)
-            .values(name, type, companyId, dateOfArrival)
+    fun createPet(name: String, type: String, companyId: Long, dateOfArrival: LocalDate) {
+        sql.insertInto(petTable)
+            .set(petTable.name, name)
+            .set(petTable.type, type)
+            .set(petTable.companyId, companyId)
+            .set(petTable.dateOfArrival, dateOfArrival)
             .execute()
     }
 
-    /*
-    fun getPet(id: Long): Pet? =
-        sql.selectFrom(petTableInstance)
-            .where(petTableInstance.id.eq(id))
-            .fetchOne(petTableMapper) // Use the correct mapper here
-    */
-
     fun getPetsByType(type: PetTypes, companyId: Long): List<Pet> {
         return sql.select()
-            .from(petTableInstance)
-            .where(petTableInstance.type.eq(type.toString()))
-            .and( petTableInstance.companyId.eq(companyId))
+            .from(petTable)
+            .where(petTable.type.eq(type.toString()))
+            .and( petTable.companyId.eq(companyId))
             .fetch(petTableMapper)
     }
-
-    enum class PetTypes{
-        Dog,
-        Cat
-    }
-
-    data class Pet(
-        // val id: Long,
-        val name: String,
-        val type: String,
-        val companyId: Long,
-        val dateOfArrival: java.sql.Date
-    )
 }
 
