@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import kotlin.random.Random
 
-// column - owneridtopets
-// employee_is - string
-// owner_id - uuid
-
 @BobDbTest
 class OwnerDaoTest @Inject constructor(private val sql: DSLContext)  {
 
