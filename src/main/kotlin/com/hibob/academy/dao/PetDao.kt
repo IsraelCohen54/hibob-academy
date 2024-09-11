@@ -16,13 +16,14 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
 
     private val petTableMapper = RecordMapper<Record, Pet> { record ->
         Pet(
-            id = record[petTableInstance.id],
+            // id = record[petTableInstance.id],
             name = record[petTableInstance.name],
             type = record[petTableInstance.type],
             companyId = record[petTableInstance.companyId],
             dateOfArrival = record[petTableInstance.dateOfArrival]//.substring(0,3)
         )
     }
+
 
     fun createPet(name: String, type: String, companyId: Long, dateOfArrival: java.sql.Date) {
         sql.insertInto(petTableInstance)
@@ -31,15 +32,18 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .execute()
     }
 
-    fun readPet(id: Long): Pet? =
+    /*
+    fun getPet(id: Long): Pet? =
         sql.selectFrom(petTableInstance)
             .where(petTableInstance.id.eq(id))
             .fetchOne(petTableMapper) // Use the correct mapper here
+    */
 
-    fun getPetsByType(type: PetTypes): List<Pet> {
+    fun getPetsByType(type: PetTypes, companyId: Long): List<Pet> {
         return sql.select()
             .from(petTableInstance)
             .where(petTableInstance.type.eq(type.toString()))
+            .and( petTableInstance.companyId.eq(companyId))
             .fetch(petTableMapper)
     }
 
@@ -49,7 +53,7 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
     }
 
     data class Pet(
-        val id: Long,
+        // val id: Long,
         val name: String,
         val type: String,
         val companyId: Long,
