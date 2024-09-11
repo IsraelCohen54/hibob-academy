@@ -29,6 +29,7 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
         )
     }
 
+    /*
     fun createOwner(name: String, companyId: Long, employeeId: String) {
         sql.insertInto(ownerTableInstance)
             .columns(ownerTableInstance.name, ownerTableInstance.companyId, ownerTableInstance.employeeId)
@@ -40,6 +41,7 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
         sql.selectFrom(ownerTableInstance)
             .where(ownerTableInstance.id.eq(id))
             .fetchOne(ownerMapper)
+*/
 
     fun getAllOwnerWithoutId(id: Long): OwnerWithoutId? =
         sql.selectFrom(ownerTableInstance)
