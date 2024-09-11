@@ -48,9 +48,9 @@ class PetController {
     @Produces("application/json")
     fun deletePet(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
-            Response.status(Status.NOT_FOUND).entity("No pet found to delete").build()
+            throw (NotFoundException("No pet with $petId found to delete"))
         } else {
-            Response.ok("Pet ${petId} deleted successfully").build()
+            Response.ok("Pet $petId deleted successfully").build()
         }
     }
 
