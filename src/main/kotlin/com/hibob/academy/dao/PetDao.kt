@@ -7,7 +7,7 @@ import org.jooq.Record
 import org.jooq.RecordMapper
 
 @Component
-class PetDao @Inject constructor(private val sql: DSLContext) { // todo ask why inject?
+class PetDao @Inject constructor(private val sql: DSLContext) {
 
     private val petTableInstance = PetTable.petInstance
 
