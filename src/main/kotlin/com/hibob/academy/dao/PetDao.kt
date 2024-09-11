@@ -6,6 +6,9 @@ import jakarta.inject.Inject
 import org.jooq.Record
 import org.jooq.RecordMapper
 
+// todo dao create update + tests pr 1 + test the fetch from yesterday)
+//
+
 @Component
 class PetDao @Inject constructor(private val sql: DSLContext) {
 
