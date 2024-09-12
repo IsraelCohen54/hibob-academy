@@ -54,7 +54,7 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
     }
 
     fun adopt(petId: Long, ownerId: Long) {
-        sql.update(petTable.ownerId)
+        sql.update(petTable)
             .set(petTable.ownerId, ownerId)
             .where(petTable.id.eq(petId))
             .execute()
