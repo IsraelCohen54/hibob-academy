@@ -43,10 +43,10 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         dog1Id?.let {
             val rexDog = Pet(dog1Id, "Rex", PetType.DOG, companyId, LocalDate.of(2024,1,1))
             cat2Id?.let{
-                val WhiskersCat = Pet(cat2Id, "Whiskers", PetType.CAT, companyId, LocalDate.of(2024,2,2))
+                val whiskersCat = Pet(cat2Id, "Whiskers", PetType.CAT, companyId, LocalDate.of(2024,2,2))
 
                 assertEquals(rexDog, fetchedDogs[0])
-                assertEquals(WhiskersCat, fetchedCats[0])
+                assertEquals(whiskersCat, fetchedCats[0])
             }
         }
     }
