@@ -19,16 +19,16 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
         Pet(
             id = record[petTable.id],
             name = record[petTable.name],
-            type = record[petTable.type],
+            type = PetType.fromString(record[(petTable.type)]),
             companyId = record[petTable.companyId],
             dateOfArrival = record[petTable.dateOfArrival]
         )
     }
 
-    fun insertPet(name: String, type: String, companyId: Long, dateOfArrival: LocalDate) {
+    fun insertPet(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate) {
         sql.insertInto(petTable)
             .set(petTable.name, name)
-            .set(petTable.type, type)
+            .set(petTable.type, type.toString())
             .set(petTable.companyId, companyId)
             .set(petTable.dateOfArrival, dateOfArrival)
             .execute()
@@ -38,8 +38,18 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
         return sql.select()
             .from(petTable)
             .where(petTable.type.eq(type.toString()))
-            .and( petTable.companyId.eq(companyId))
+            .and(petTable.companyId.eq(companyId))
             .fetch(petTableMapper)
+    }
+
+    fun getPetId(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate) :Long? {
+        return sql.select(petTable.id)
+            .from(petTable)
+            .where(petTable.name.eq(name)
+            .and(petTable.companyId.eq(companyId))
+            .and(petTable.type.eq(type.toString()))
+            .and(petTable.dateOfArrival.eq(dateOfArrival)))
+            .fetchOne(petTable.id)
     }
 }
 
