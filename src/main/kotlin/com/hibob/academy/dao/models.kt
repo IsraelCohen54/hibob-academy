@@ -19,7 +19,7 @@ data class Pet(
     val dateOfArrival: LocalDate
 )
 
-enum class PetTypes{
+enum class PetType{
     Dog,
     Cat
 }

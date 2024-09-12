@@ -20,10 +20,10 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     @Test
     fun `insert pet test`() {
 
-        petDao.insertPet(name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
-        petDao.insertPet(name = "Rexi", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2))
+        petDao.insertPet(name = "Rex", type = PetType.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
+        petDao.insertPet(name = "Rexi", type = PetType.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2))
 
-        val fetchedPets = petDao.getPetsByType(PetTypes.Dog, companyId)
+        val fetchedPets = petDao.getPetsByType(PetType.Dog, companyId)
 
         assertEquals(2, fetchedPets.size)
     }
@@ -31,11 +31,11 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     @Test
     fun `get pets by type test`() {
 
-        petDao.insertPet(name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1,1))
-        petDao.insertPet(name = "Whiskers", type = PetTypes.Cat.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,2,2))
+        petDao.insertPet(name = "Rex", type = PetType.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1,1))
+        petDao.insertPet(name = "Whiskers", type = PetType.Cat.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,2,2))
 
-        val fetchedDogs = petDao.getPetsByType(PetTypes.Dog, companyId)
-        val fetchedCats = petDao.getPetsByType(PetTypes.Cat, companyId)
+        val fetchedDogs = petDao.getPetsByType(PetType.Dog, companyId)
+        val fetchedCats = petDao.getPetsByType(PetType.Cat, companyId)
 
         assertEquals(1, fetchedDogs.size)
         assertEquals(1, fetchedCats.size)
@@ -45,7 +45,7 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     fun `get pets by type test without any pets`() {
         val emptyList: List<Pet> = emptyList()
 
-        val fetchedPets = petDao.getPetsByType(PetTypes.Dog, companyId)
+        val fetchedPets = petDao.getPetsByType(PetType.Dog, companyId)
 
         assertEquals(emptyList, fetchedPets)
     }

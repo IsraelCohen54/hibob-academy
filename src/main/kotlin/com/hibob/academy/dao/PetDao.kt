@@ -34,7 +34,7 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .execute()
     }
 
-    fun getPetsByType(type: PetTypes, companyId: Long): List<Pet> {
+    fun getPetsByType(type: PetType, companyId: Long): List<Pet> {
         return sql.select()
             .from(petTable)
             .where(petTable.type.eq(type.toString()))
