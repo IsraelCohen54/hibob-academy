@@ -34,4 +34,29 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
         sql.selectFrom(ownerTable)
             .where(ownerTable.companyId.eq(companyId))
             .fetch(ownerMapper)
+
+    fun getOwnerId(companyId: Long, employeeId: String): Long? {
+        return sql.selectFrom(ownerTable)
+            .where(
+                ownerTable.companyId.eq(companyId)
+                    .and(ownerTable.employeeId.eq(employeeId))
+            )
+            .fetchOne(ownerTable.id)
+    }
+
+    fun getOwnerById(id: Long, companyId: Long): Owner? {
+        return sql.selectFrom(ownerTable) // Specify the table to select from
+            .where(
+                ownerTable.companyId.eq(companyId)
+                    .and(ownerTable.id.eq(id)) // Convert `id` to Long if necessary
+            )
+            .fetchOne { record ->
+                Owner(
+                    id = record[ownerTable.id],
+                    name = record[ownerTable.name],
+                    employeeId = record[ownerTable.employeeId],
+                    companyId = record[ownerTable.companyId]
+                )
+            }
+    }
 }

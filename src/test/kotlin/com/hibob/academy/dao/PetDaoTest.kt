@@ -21,11 +21,10 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     fun `insert pet test`() {
 
         petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
-        petDao.insertPet(name = "Rexi", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2))
 
-        val fetchedPets = petDao.getPetsByType(PetType.DOG, companyId)
-
-        assertEquals(2, fetchedPets.size)
+        val insertedPet = petDao.getPetsByType(PetType.DOG, companyId)
+        val originPet = Pet(petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))!!, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1), null)
+        assertEquals(originPet, insertedPet[0])
     }
 
     @Test
@@ -84,34 +83,38 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         val petId = petDao.getPetsByType(PetType.DOG, companyId).first().id
 
         val ownerId = 100L
-        petDao.adopt(petId, ownerId)
+        petDao.adopt(petId, ownerId, companyId)
 
-        val fetchedOwnerId = petDao.getOwnerByPet(petId)
+        val fetchedOwnerId = petDao.getPetOwnerId(petId)
         assertEquals(ownerId, fetchedOwnerId, "The owner ID should match the expected owner ID after adoption")
     }
 
     @Test
-    fun `test getOwnerByPet returns correct ownerId`() {
-        // Insert a pet and set an owner ID
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
-        val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
-        val ownerId = 100L
+    fun `test getPetOwner returns correct owner`() {
 
-        petId?.let {
-            petDao.adopt(petId, ownerId)
-            // Retrieve the owner ID by pet ID
-            val fetchedOwnerId = petDao.getOwnerByPet(petId)
-            assertEquals(ownerId, fetchedOwnerId, "The retrieved owner ID should match the one set during adoption")
+        val ownerDao = OwnerDao(sql)
+        ownerDao.insertOwner("Bob1", companyId, "123")
+
+        val ownerId = ownerDao.getOwnerId(companyId, "123")
+        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId,
+            dateOfArrival = LocalDate.of(2024, 1, 1), ownerId = ownerId)
+
+        val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
+        petId?.let{
+            val petOwner = petDao.getPetOwner(petId)
+            ownerId?.let {
+                assertEquals(petOwner, ownerDao.getOwnerById(ownerId, companyId))
+            }
         }
     }
 
     @Test
-    fun `test getOwnerByPet returns null for pet without owner`() {
+    fun `test getPetOwnerId returns null for pet without owner`() {
         petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
         val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
 
         petId?.let {
-            val fetchedOwnerId = petDao.getOwnerByPet(petId)
+            val fetchedOwnerId = petDao.getPetOwnerId(petId)
             assertEquals(null, fetchedOwnerId, "The retrieved owner ID should be null if no owner has been set")
         }
     }

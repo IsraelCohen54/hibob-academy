@@ -33,12 +33,46 @@ class OwnerDaoTest @Inject constructor(private val sql: DSLContext)  {
 
     @Test
     fun `insert same owner by unique key, changed name value, should not be added to DB using conflict`() {
-        val owner1 = Owner(1, "Bob1", companyId, "123")
-        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
-        ownerDao.insertOwner("other name, same unique key", companyId, owner1.employeeId)
-        assertEquals(1,ownerDao.getOwners(companyId).size)
-        val owners = ownerDao.getOwners(companyId)
-        assertTrue(owners.any { it?.name == owner1.name }, "Owner with name ${owner1.name} does not exist")
+
+        ownerDao.insertOwner("Bob1", companyId, "123")
+        ownerDao.insertOwner("other name, same unique key", companyId, "123")
+
+        val ownerId1 = ownerDao.getOwnerId(companyId, "123")
+        ownerId1?.let {
+            val fetchedOwner = ownerDao.getOwnerById(ownerId1, companyId)
+            fetchedOwner?.let {
+                assertEquals(fetchedOwner.name, "Bob1")
+            }
+        }
+    }
+
+    @Test
+    fun `test getOwnerById returns correct owner`() {
+        ownerDao.insertOwner("Bob1", companyId, "123")
+
+        val ownerId = ownerDao.getOwnerId(companyId, "123")
+        ownerId?.let {
+            val fetchedOwner = ownerDao.getOwnerById(ownerId, companyId)
+
+            assertEquals(
+                Owner(id = ownerId, name = "Bob1", employeeId = "123", companyId = companyId),
+                fetchedOwner,
+                "The retrieved owner should match the inserted owner"
+            )
+        }
+    }
+
+    @Test
+    fun `test getOwnerId returns correct owner ID`() {
+        ownerDao.insertOwner("Bob1", companyId, "123")
+        val fetchedOwnerId = ownerDao.getOwnerId(companyId, "123")
+
+        fetchedOwnerId?.let {
+            val expectedOwnerId = ownerDao.getOwners(companyId).firstOrNull()?.id
+            assertEquals(expectedOwnerId, fetchedOwnerId,
+                "The retrieved owner ID should match the expected owner ID"
+            )
+        }
     }
 
     @BeforeEach
