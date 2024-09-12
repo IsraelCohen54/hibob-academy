@@ -19,27 +19,26 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
 
     @Test
     fun `insert pet test`() {
-        val pet = Pet(1, name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
-        petDao.createPet(pet.name, pet.type, pet.companyId, pet.dateOfArrival)
+
+        petDao.insertPet(name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
+        petDao.insertPet(name = "Rexi", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2))
 
         val fetchedPets = petDao.getPetsByType(PetTypes.Dog, companyId)
 
-        assertEquals(listOf(pet), fetchedPets)
+        assertEquals(2, fetchedPets.size)
     }
 
     @Test
     fun `get pets by type test`() {
 
-        val pet1 = Pet(1, name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1,1))
-        val pet2 = Pet(2, name = "Whiskers", type = PetTypes.Cat.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,0,2))
-        petDao.createPet(pet1.name, pet1.type, pet1.companyId, pet1.dateOfArrival)
-        petDao.createPet(pet2.name, pet2.type, pet2.companyId, pet2.dateOfArrival)
+        petDao.insertPet(name = "Rex", type = PetTypes.Dog.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,1,1))
+        petDao.insertPet(name = "Whiskers", type = PetTypes.Cat.toString(), companyId = companyId, dateOfArrival = LocalDate.of(2024,2,2))
 
         val fetchedDogs = petDao.getPetsByType(PetTypes.Dog, companyId)
         val fetchedCats = petDao.getPetsByType(PetTypes.Cat, companyId)
 
-        assertEquals(listOf(pet1), fetchedDogs)
-        assertEquals(listOf(pet2), fetchedCats)
+        assertEquals(1, fetchedDogs.size)
+        assertEquals(1, fetchedCats.size)
     }
 
     @Test

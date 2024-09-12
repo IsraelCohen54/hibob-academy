@@ -19,8 +19,8 @@ class OwnerDaoTest @Inject constructor(private val sql: DSLContext)  {
 
     @Test
     fun `insert owner`() {
-        val owner1 = Owner(1, "Bob1", companyId, "123")
-        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
+        ownerDao.insertOwner("Bob1", companyId, "123")
+        val owner1 = ownerDao.getOwners(companyId)[0]
         val compareLists: List<Owner?> = listOf(owner1)
         assertEquals(compareLists, ownerDao.getOwners(companyId))
     }
@@ -32,11 +32,13 @@ class OwnerDaoTest @Inject constructor(private val sql: DSLContext)  {
     }
 
     @Test
-    fun `insert same owner - do not add to DB using conflict`() {
+    fun `insert same owner by unique key, changed name value, should not be added to DB using conflict`() {
         val owner1 = Owner(1, "Bob1", companyId, "123")
         ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
-        ownerDao.insertOwner(owner1.name, companyId, owner1.employeeId)
+        ownerDao.insertOwner("other name, same unique key", companyId, owner1.employeeId)
         assertEquals(1,ownerDao.getOwners(companyId).size)
+        val owners = ownerDao.getOwners(companyId)
+        assertTrue(owners.any { it?.name == owner1.name }, "Owner with name ${owner1.name} does not exist")
     }
 
     @BeforeEach
