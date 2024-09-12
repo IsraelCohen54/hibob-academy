@@ -17,7 +17,8 @@ data class Pet(
     val name: String,
     val type: PetType,
     val companyId: Long,
-    val dateOfArrival: LocalDate
+    val dateOfArrival: LocalDate,
+    val ownerId: Long?
 )
 
 enum class PetType{

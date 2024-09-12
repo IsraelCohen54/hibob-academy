@@ -21,7 +21,8 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             name = record[petTable.name],
             type = PetType.fromString(record[(petTable.type)]),
             companyId = record[petTable.companyId],
-            dateOfArrival = record[petTable.dateOfArrival]
+            dateOfArrival = record[petTable.dateOfArrival],
+            ownerId = record[petTable.ownerId]
         )
     }
 
@@ -50,6 +51,20 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .and(petTable.type.eq(type.toString()))
             .and(petTable.dateOfArrival.eq(dateOfArrival)))
             .fetchOne(petTable.id)
+    }
+
+    fun adopt(petId: Long, ownerId: Long) {
+        sql.update(petTable.ownerId)
+            .set(petTable.ownerId, ownerId)
+            .where(petTable.id.eq(petId))
+            .execute()
+    }
+
+    fun getOwnerByPet(petId: Long): Long? {
+        return sql.select(petTable.ownerId)
+            .from(petTable)
+            .where(petTable.id.eq(petId))
+            .fetchOne(petTable.ownerId)
     }
 }
 
