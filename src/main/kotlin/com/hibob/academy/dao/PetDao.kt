@@ -69,21 +69,11 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
     }
 
     fun getPetOwner(petId: Long): Owner? {
-        // Fetch the ownerId from the petTable based on the petId
-        val ownerId = sql.select(petTable.ownerId)
-            .from(petTable)
-            .where(petTable.id.eq(petId))
-            .fetchOne(petTable.ownerId)
-
-        // If no ownerId found, return null
-        if (ownerId == null) {
-            return null
-        }
-
-        // Fetch the owner details from the ownerTable based on the ownerId
         return sql.select()
-            .from(ownerTable)
-            .where(ownerTable.id.eq(ownerId))
+            .from(petTable)
+            .join(ownerTable)
+            .on(petTable.ownerId.eq(ownerTable.id))
+            .where(petTable.id.eq(petId))
             .fetchOne { record ->
                 Owner(
                     id = record[ownerTable.id],
@@ -94,4 +84,3 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             }
     }
 }
-
