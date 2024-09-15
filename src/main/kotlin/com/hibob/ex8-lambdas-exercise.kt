@@ -1,5 +1,6 @@
 package com.hibob
 
+import com.fasterxml.jackson.databind.JsonNode
 import java.time.LocalDate
 
 /*
@@ -56,42 +57,42 @@ class SpidermanNoWayHome() : SpidermanMovieProduceActions {
             appendLine("rank: $imdbRank")}
     }
     override fun signTobeyMaguire() {
-        //  Tobey signed!
+        println("Tobey signed!")
     }
 
     override fun signAndrew() {
-        //    Andrew signed
+       println("andrews signed")
     }
 
     override fun signTom() {
-        //    Tom signed
+        println("tom signed")
     }
 
     override fun getVillains() {
-        //   Got villains
+        println("got villains")
     }
 
     override fun isThereLockdown(): Boolean = false
 
     override fun publish(): Boolean = true
 
-//    fun toJson(): JsonNode {
-//        /* implement the following json structure:
-//                {
-//                 "title" : title,
-//                 "airDate": 2021-12-16,
-//                 "imdbRank": 9.6
-//                }
+    //fun toJson(): JsonNode {
+    //    /* implement the following json structure:
+    //            {
+    //             "title" : title,
+    //             "airDate": 2021-12-16,
+    //             "imdbRank": 9.6
+    //            }
 //
-//        Note: In kotlin we receive the default object serializer "for free"
-//        and we will not have to implement it from here
-//        But, knowing how to write jsons in kotlin is still very important!
-//        the common use cases: S2S clients implementation, tests and more */
+    //    Note: In kotlin we receive the default object serializer "for free"
+    //    and we will not have to implement it from here
+    //    But, knowing how to write jsons in kotlin is still very important!
+    //    the common use cases: S2S clients implementation, tests and more */
 //
-//        return JsonBuilderObject().json {
-//            "notImplemented" - true
-//        }.asTree()
-//    }
+    //    return JsonBuilderObject().json {
+    //        "notImplemented" - true
+    //    }.asTree()
+    //}
 
 }
 
@@ -110,7 +111,6 @@ class Runner(private val movieProducer: SpidermanMovieProduceActions?) {
                 signTom()
                 getVillains()
                 publish()
-                true
             } else {
                 false
             }
