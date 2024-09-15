@@ -1,6 +1,8 @@
 package com.hibob
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.time.LocalDate
 
 /*
@@ -17,7 +19,7 @@ fun main() {
 
     printSuccessMessage(success)
     println("Pretty print: ${movie.prettyPrint()}")
-//    println("Json: ${movie.toJson()}")
+    println("Json: ${movie.toJson()}")
 }
 
 fun createGoodMovie() : SpidermanNoWayHome {
@@ -52,48 +54,43 @@ class SpidermanNoWayHome() : SpidermanMovieProduceActions {
     override val imdbRank: Double = 9.6
 
     fun prettyPrint(): String {
-        return buildString { appendLine("Title: $title")
+        return buildString {
+            appendLine("Title: $title")
             appendLine("date: $airDate")
-            appendLine("rank: $imdbRank")}
+            appendLine("rank: $imdbRank")
+        }
     }
     override fun signTobeyMaguire() {
-        println("Tobey signed!")
+        println("TOBEY SIGNED!!")
     }
 
     override fun signAndrew() {
-       println("andrews signed")
+       println("ANDREW SIGNED!")
     }
 
     override fun signTom() {
-        println("tom signed")
+        println("TOM SIGNED!")
     }
 
     override fun getVillains() {
-        println("got villains")
+        println("GOT VILLAINS!")
     }
 
     override fun isThereLockdown(): Boolean = false
 
     override fun publish(): Boolean = true
 
-    //fun toJson(): JsonNode {
-    //    /* implement the following json structure:
-    //            {
-    //             "title" : title,
-    //             "airDate": 2021-12-16,
-    //             "imdbRank": 9.6
-    //            }
-//
-    //    Note: In kotlin we receive the default object serializer "for free"
-    //    and we will not have to implement it from here
-    //    But, knowing how to write jsons in kotlin is still very important!
-    //    the common use cases: S2S clients implementation, tests and more */
-//
-    //    return JsonBuilderObject().json {
-    //        "notImplemented" - true
-    //    }.asTree()
-    //}
-
+    fun toJson(): JsonNode {
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        val jsonString = buildString {
+            append("{")
+            append("\"title\":\"$title\",")
+            append("\"airDate\":\"$airDate\",")
+            append("\"imdbRank\":$imdbRank")
+            append("}")
+        }
+        return mapper.readTree(jsonString)
+    }
 }
 
 fun buildString(actions: StringBuilder.() -> Unit):String{
