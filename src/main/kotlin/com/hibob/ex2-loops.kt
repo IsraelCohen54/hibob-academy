@@ -1,6 +1,9 @@
 package com.hibob
 
-fun isContainDolarSymbol(s: String): Boolean = "$" !in s
+fun isContainsSpecialCharacterExcludingUnderscore(s: String): Boolean {
+    val regex = "[^a-zA-Z0-9_]".toRegex()
+    return regex.containsMatchIn(s)
+}
 
 fun isContainOnlyNumbers(s: String): Boolean {
     var numberOnly = true
@@ -24,7 +27,7 @@ fun isValidIdentifier(s: String): Boolean {
     val res = isContainOnlyNumbers(s)
     if (!res) return false
 
-    return isContainDolarSymbol(s)
+    return isContainsSpecialCharacterExcludingUnderscore(s)
 }
 
 fun main(args: Array<String>) {
