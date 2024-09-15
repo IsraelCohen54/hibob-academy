@@ -50,13 +50,6 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
                 ownerTable.companyId.eq(companyId)
                     .and(ownerTable.id.eq(id)) // Convert `id` to Long if necessary
             )
-            .fetchOne { record ->
-                Owner(
-                    id = record[ownerTable.id],
-                    name = record[ownerTable.name],
-                    employeeId = record[ownerTable.employeeId],
-                    companyId = record[ownerTable.companyId]
-                )
-            }
+            .fetchOne(ownerMapper)
     }
 }
