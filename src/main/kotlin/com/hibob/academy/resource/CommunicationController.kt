@@ -1,5 +1,6 @@
 package com.hibob.academy.resource
 
+import com.hibob.academy.filter.COOKIE_NAME
 import com.hibob.academy.service.SessionService
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.POST
@@ -19,7 +20,7 @@ class TokenController(private val sessionService: SessionService) {
     @Consumes(MediaType.APPLICATION_JSON)
     fun createToken(loginRequest:LoginRequest): Response {
         val creatJwrToken = sessionService.createJwtToken(loginRequest)
-        val cookie = NewCookie.Builder("JWT").value(creatJwrToken).build()
+        val cookie = NewCookie.Builder(COOKIE_NAME).value(creatJwrToken).build()
         return Response.ok().cookie(cookie).build()
     }
 
