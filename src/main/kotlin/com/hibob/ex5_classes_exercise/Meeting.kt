@@ -1,12 +1,16 @@
 package com.hibob.ex5_classes_exercise
 
-interface Location{}
+interface Location {
+    val street: String
+    val city: String
+    val county: String
+}
 
-data class Us(val zipCode: Int) : Location {}
+data class Us(val zipCode: Int, override val street: String, override val city: String, override val county: String) : Location
 
-data class Uk(val postalCode: Int) : Location {}
+data class Uk(val postalCode: Int, override val street: String, override val city: String, override val county: String) : Location
 
-data class LocationDetails(val street: String, val city: String, val county: String, val loc:Location) {}
+data class LocationDetails(val loc:Location) {}
 
 open class Meeting(private val name: String, private val locationDetails: List<LocationDetails>) {
     private lateinit var participant: MutableList<Participant>
