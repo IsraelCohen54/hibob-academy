@@ -1,5 +1,6 @@
 package com.hibob
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,7 +19,8 @@ class UserServiceTest {
         val user = User(1, "a", "a@a.co", "1q2w3e", false)
 
         whenever(userDao.findById(user.id)).thenReturn(user)
-        assertThrows<IllegalArgumentException>("User already exists") { userService.registerUser(user) }
+        val exception = assertThrows<IllegalArgumentException> { userService.registerUser(user) }
+        assertEquals("User already exists", exception.message)
     }
 
     @Test
@@ -26,7 +28,9 @@ class UserServiceTest {
         val user = User(1, "a", "a@a.co", "1q2w3e", false)
         whenever(userDao.findById(user.id)).thenReturn(null)
         whenever(userDao.save(user.copy(isEmailVerified = false))).thenReturn(false)
-        assertThrows<IllegalStateException>("\"User registration failed\"") { userService.registerUser(user)}
+
+        val exception = assertThrows<IllegalStateException> { userService.registerUser(user) }
+        assertEquals("User registration failed", exception.message)
     }
 
     @Test
@@ -35,7 +39,9 @@ class UserServiceTest {
         whenever(userDao.findById(user.id)).thenReturn(null)
         whenever(userDao.save(user.copy(isEmailVerified = false))).thenReturn(true)
         whenever(emailVerificationService.sendVerificationEmail(user.email)).thenReturn(false)
-        assertThrows<IllegalStateException>("Failed to send verification email") { userService.registerUser(user)}
+
+        val exception = assertThrows<IllegalStateException> { userService.registerUser(user) }
+        assertEquals("Failed to send verification email", exception.message)
     }
 
     @Test
@@ -52,7 +58,8 @@ class UserServiceTest {
         val user = User(1, "a", "a@a.co", "1q2w3e", false)
 
         whenever(userDao.findById(user.id)).thenReturn(user)
-        assertThrows<IllegalArgumentException>("User not found") { userService.verifyUserEmail(0, "abc") }
+        val exception = assertThrows<IllegalArgumentException> { userService.verifyUserEmail(0, "abc") }
+        assertEquals("User not found", exception.message)
     }
 
     @Test
@@ -62,7 +69,8 @@ class UserServiceTest {
 
         whenever(userDao.findById(user.id)).thenReturn(user)
         whenever(emailVerificationService.verifyEmail(user.email, token)).thenReturn(false)
-        assertThrows<IllegalArgumentException>("Email verification failed") { userService.verifyUserEmail(1, token) }
+        val exception = assertThrows<IllegalArgumentException> { userService.verifyUserEmail(1, token) }
+        assertEquals("Email verification failed", exception.message)
     }
 
     @Test
