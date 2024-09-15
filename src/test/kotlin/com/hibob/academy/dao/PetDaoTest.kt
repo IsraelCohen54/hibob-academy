@@ -122,6 +122,8 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     @BeforeEach
     @AfterEach
     fun cleanup() {
+        val ownerTable = PetTable.petInstance
         sql.deleteFrom(table).where(table.companyId.eq(companyId)).execute()
+        sql.deleteFrom(ownerTable).where(table.companyId.eq(companyId)).execute()
     }
 }

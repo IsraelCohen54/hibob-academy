@@ -11,7 +11,7 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
 
     private val ownerTable = OwnerTable.ownerInstance
 
-    private val ownerMapper = RecordMapper<Record, Owner> { record ->
+    val ownerMapper = RecordMapper<Record, Owner> { record ->
         Owner(
             id = record[ownerTable.id],
             name = record[ownerTable.name],
