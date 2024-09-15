@@ -5,14 +5,6 @@ fun isContainsSpecialCharacterExcludingUnderscore(s: String): Boolean {
     return regex.containsMatchIn(s)
 }
 
-fun isContainOnlyNumbers(s: String): Boolean {
-    var numberOnly = true
-    for (char in s) {
-        if (char in '0'..'9') continue else numberOnly = false
-    }
-    return !numberOnly
-}
-
 fun isValidIdentifier(s: String): Boolean {
     // vacant
     if (s == "" ) {
@@ -23,9 +15,6 @@ fun isValidIdentifier(s: String): Boolean {
     if (s[0] in '0'..'9') {
         return false
     }
-
-    val res = isContainOnlyNumbers(s)
-    if (!res) return false
 
     return isContainsSpecialCharacterExcludingUnderscore(s)
 }
