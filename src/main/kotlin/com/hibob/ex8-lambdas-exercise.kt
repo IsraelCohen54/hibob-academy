@@ -61,19 +61,19 @@ class SpidermanNoWayHome() : SpidermanMovieProduceActions {
         }
     }
     override fun signTobeyMaguire() {
-        println("TOBEY SIGNED!!")
+        println("Tobey signed!")
     }
 
     override fun signAndrew() {
-       println("ANDREW SIGNED!")
+       println("Ansrew signed!")
     }
 
     override fun signTom() {
-        println("TOM SIGNED!")
+        println("Tom signed!")
     }
 
     override fun getVillains() {
-        println("GOT VILLAINS!")
+        println("Got villains!")
     }
 
     override fun isThereLockdown(): Boolean = false
