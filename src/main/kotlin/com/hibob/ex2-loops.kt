@@ -19,7 +19,7 @@ fun isValidIdentifier(s: String): Boolean {
     return isContainsSpecialCharacterExcludingUnderscore(s)
 }
 
-fun main(args: Array<String>) {
+fun main333(args: Array<String>) {
     println(isValidIdentifier("name"))   // true
     println(isValidIdentifier("_name"))  // true
     println(isValidIdentifier("_12"))    // true
