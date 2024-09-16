@@ -21,7 +21,7 @@ data class Pet(
     val ownerId: Long?
 )
 
-enum class PetType{
+enum class PetType {
     DOG,
     CAT;
 
@@ -32,3 +32,13 @@ enum class PetType{
         }
     }
 }
+
+data class Vaccine (val id: Long, val name: String)
+
+data class VaccineToPet(
+    val id: Long,
+    val name: String,
+    val vaccinationDate: LocalDate,
+    val petId: Long
+)
+

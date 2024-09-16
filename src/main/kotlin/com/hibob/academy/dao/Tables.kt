@@ -25,3 +25,23 @@ class OwnerTable(tableName: String = "owners") : JooqTable(tableName) {
         val ownerInstance = OwnerTable()
     }
 }
+
+class VaccineTable(tableName: String = "vaccine") : JooqTable(tableName) {
+    val id = createBigIntField("id")
+    val name = createVarcharField("name")
+
+    companion object {
+        val vaccineInstance = VaccineTable()
+    }
+}
+
+class VaccineToPetTable(tableName: String = "vaccine_to_pet") : JooqTable(tableName) {
+    val id = createBigIntField("id")
+    val name = createVarcharField("name")
+    val vaccinationDate =  createLocalDateField("vaccination_date")
+    val petId = createBigIntField("pet_id")
+
+    companion object {
+        val vaccineToPetInstance = VaccineToPetTable()
+    }
+}
