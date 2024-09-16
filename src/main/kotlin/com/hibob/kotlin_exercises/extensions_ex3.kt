@@ -25,7 +25,7 @@ infix fun Number.toPowerOf(exponent: Number): Double {
     return this.toDouble().pow(exponent.toDouble())
 }
 
-fun main() {
+fun main14() {
     val numList = listOf(1,2,3,4,5)
 
     println(numList.sum())
