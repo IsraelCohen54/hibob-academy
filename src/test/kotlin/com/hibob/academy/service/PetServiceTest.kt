@@ -23,8 +23,9 @@ class PetServiceTest {
     fun `adoptPet should throw IllegalStateException if pet already has an owner`() {
         val petId = 1L
         val ownerId = 2L
+        val fakeAlreadyExistedOwnerId = 3L
 
-        whenever(petDao.getPetOwnerId(petId, companyId)).thenReturn(3L)
+        whenever(petDao.getPetOwnerId(petId, companyId)).thenReturn(fakeAlreadyExistedOwnerId)
 
         val exception = assertThrows<IllegalStateException> {
             petService.adoptPet(petId, ownerId, companyId)
