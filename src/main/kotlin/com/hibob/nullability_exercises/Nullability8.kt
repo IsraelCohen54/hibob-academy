@@ -34,7 +34,7 @@ fun initializeCompany(): Company {
     )
 }
 
-fun main() {
+fun main11() {
     val company = initializeCompany()
 
     // Print company name with a fallback if it's null

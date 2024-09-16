@@ -8,7 +8,7 @@ package com.hibob.nullability_exercises
  */
 data class User(val name: String?, val email: String?)
 
-fun main() {
+fun main4() {
     val user1 = User("Alice", null)
     val user2 = User(null, "alice@example.com")
 

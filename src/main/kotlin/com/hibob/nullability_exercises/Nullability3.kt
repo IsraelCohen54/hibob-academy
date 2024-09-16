@@ -16,7 +16,7 @@ fun String?.nullSafeToUpper(): String
     return "NO TEXT PROVIDED"
 }
 
-fun main() {
+fun main6() {
     // Task: Create and use an extension function to print text in uppercase if it's not null, or "NO TEXT PROVIDED" if it is null.
     val text: String? = "Learn Kotlin"
     println(text.nullSafeToUpper())

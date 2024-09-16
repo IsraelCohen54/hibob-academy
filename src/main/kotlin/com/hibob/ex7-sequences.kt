@@ -1,6 +1,6 @@
 package com.hibob
 
-fun main() {
+fun main2() {
     ex5()
 }
 

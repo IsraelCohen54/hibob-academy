@@ -18,7 +18,7 @@ fun max (num1: Int, num2: Int) = if (num1 > num2) num1 else num2
 
 fun multiplication(a: Int = 1, b: Int = 1): Int = a * b
 
-fun main() {
+fun main3() {
     println("Hello world!")
 
     // test:
