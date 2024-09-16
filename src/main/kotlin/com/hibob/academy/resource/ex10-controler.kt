@@ -1,6 +1,7 @@
 package com.hibob.academy.resource
 import com.hibob.academy.dao.Pet
 import com.hibob.academy.dao.PetDao
+import com.hibob.academy.service.PetService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
@@ -12,10 +13,7 @@ class DaoController {
 
     @Autowired
     private lateinit var petDao: PetDao
-
-    fun setPetDao(petDao: PetDao) {
-        this.petDao = petDao
-    }
+    private val petService:PetService = PetService(petDao)
 
     // GET request to retrieve pet type by ID
     @GET
@@ -76,38 +74,15 @@ class DaoController {
     @Path("/{companyId}/{petId}/adopt/{ownerId}")
     @Produces("application/json")
     fun adoptPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
-        val isPetOwnerLess = petDao.getPetOwnerId(petId)
-        isPetOwnerLess?.let {
-            try {
-                return Response.status(Status.CONFLICT).entity("Pet with ID $petId has already an owner").build()
-            } catch (e: Exception) {
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity("got exception: $e").build()
-            }
-        }?:
-        run{
-            try {
-                petDao.adopt(petId, ownerId, companyId)
-                return Response.ok("Pet $petId adopted by owner $ownerId").build()
-            }
-            catch(e: Exception) {
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity("got exception: $e").build()
-            }
-        }
+        petService.adoptPet(petId, ownerId, companyId)
+        return Response.ok("Pet $petId adopted by owner $ownerId").build()
     }
 
     @GET
     @Path("/{petId}/owner")
     @Produces("application/json")
     fun getOwnerByPetId(@PathParam("petId") petId: Long): Response {
-        return try {
-            val owner = petDao.getPetOwner(petId)
-            owner?.let{
-                Response.ok(owner).build()
-            } ?: Response.status(Status.NOT_FOUND).entity("Owner for pet with ID $petId not found").build()
-
-        } catch (e: Exception) {
-            Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error occurred while retrieving owner: $e").build()
-        }
+        val owner = petService.getOwnerByPetId(petId)
+           return Response.ok(owner).build()
     }
 }
-
