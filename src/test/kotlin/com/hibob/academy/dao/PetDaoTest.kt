@@ -69,7 +69,6 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         petId?.let {
             val pet = Pet(id = petId, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1), null)
 
-            // Fetch pets by type
             val pets = petDao.getPetsByType(PetType.DOG, companyId)
 
             assertEquals(pet, pets.iterator().asSequence().find { it.id == petId })
@@ -117,6 +116,23 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
             val fetchedOwnerId = petDao.getPetOwnerId(petId, companyId)
             assertEquals(null, fetchedOwnerId, "The retrieved owner ID should be null if no owner has been set")
         }
+    }
+
+    @Test
+    fun `test getOwnerPets returns list of pets` () {
+        petDao.insertPet(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101)
+        petDao.insertPet(name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101)
+        petDao.insertPet(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
+        petDao.insertPet(name = "Rex4", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
+
+        val ownerPets = petDao.getOwnerPets(101)
+
+        val expectedOwnerPets = listOf(
+            Pet(id = petDao.getPetId(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6))!!, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101),
+            Pet(id = petDao.getPetId(name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5))!!, name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101),
+            Pet(id = petDao.getPetId(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5))!!, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
+        )
+        assertEquals(expectedOwnerPets, ownerPets)
     }
 
     @BeforeEach

@@ -5,6 +5,10 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 
 @Path("/api")
@@ -73,5 +77,19 @@ class DaoController @Inject constructor(private val petService: PetService) {
     fun getOwnerByPetId(@PathParam("petId") petId: Long, @PathParam("companyId") companyId: Long): Response {
         val owner = petService.getOwnerByPetId(petId, companyId)
            return Response.ok(owner).build()
+    }
+
+    @GET
+    @Path("/{ownerId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    fun getOwnerPets(@PathParam("ownerId") ownerId: Long): Response {
+        val ownerPets = petService.getOwnerPets(ownerId)
+        return Response.ok(ownerPets).build()
+    }
+
+    @GetMapping("/countByType")
+    fun countPetsByType(@RequestParam companyId: Long): ResponseEntity<Map<PetType, Int>> {
+        return ResponseEntity.ok(petService.countPetsByType(companyId))
     }
 }

@@ -85,4 +85,11 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
                 )
             }
     }
+
+    fun getOwnerPets(ownerId: Long): List<Pet> {
+        return sql.select()
+            .from(petTable)
+            .where(petTable.ownerId.eq(ownerId))
+            .fetch(petTableMapper)
+    }
 }
