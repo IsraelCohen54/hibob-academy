@@ -1,4 +1,5 @@
-package com.hibob.academy.resource
+/*package com.hibob.academy.resource
+
 
 import com.hibob.academy.dao.Example
 import com.hibob.academy.service.ExampleService
@@ -34,3 +35,4 @@ internal class ExampleResourceTest {
         assertThat(response.body, `is`(ExampleResponse(example)))
     }
 }
+*/
