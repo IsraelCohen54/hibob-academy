@@ -4,11 +4,11 @@ import com.hibob.academy.utils.BobDbTest
 import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
-import kotlin.random.Random
 import java.time.LocalDate
+import kotlin.random.Random
 
 @BobDbTest
 class PetDaoTest @Inject constructor(private val sql: DSLContext) {
@@ -85,7 +85,7 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         val ownerId = 100L
         petDao.adopt(petId, ownerId, companyId)
 
-        val fetchedOwnerId = petDao.getPetOwnerId(petId)
+        val fetchedOwnerId = petDao.getPetOwnerId(petId, companyId)
         assertEquals(ownerId, fetchedOwnerId, "The owner ID should match the expected owner ID after adoption")
     }
 
@@ -101,7 +101,7 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
 
         val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
         petId?.let{
-            val petOwner = petDao.getPetOwner(petId)
+            val petOwner = petDao.getPetOwner(petId, companyId)
             ownerId?.let {
                 assertEquals(petOwner, ownerDao.getOwnerById(ownerId, companyId))
             }
@@ -114,7 +114,7 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
 
         petId?.let {
-            val fetchedOwnerId = petDao.getPetOwnerId(petId)
+            val fetchedOwnerId = petDao.getPetOwnerId(petId, companyId)
             assertEquals(null, fetchedOwnerId, "The retrieved owner ID should be null if no owner has been set")
         }
     }

@@ -1,10 +1,10 @@
 package com.hibob.academy.dao
 
-import org.jooq.DSLContext
-import org.springframework.stereotype.Component
 import jakarta.inject.Inject
+import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
@@ -61,19 +61,21 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .execute()
     }
 
-    fun getPetOwnerId(petId: Long): Long? {
+    fun getPetOwnerId(petId: Long, companyId: Long) :Long? {
         return sql.select(petTable.ownerId)
             .from(petTable)
-            .where(petTable.id.eq(petId))
+            .where(petTable.id.eq(petId)
+                .and(petTable.companyId.eq(companyId)))
             .fetchOne(petTable.ownerId)
     }
 
-    fun getPetOwner(petId: Long): Owner? {
+    fun getPetOwner(petId: Long, companyId: Long): Owner? {
         return sql.select()
             .from(petTable)
             .join(ownerTable)
             .on(petTable.ownerId.eq(ownerTable.id))
-            .where(petTable.id.eq(petId))
+            .where(petTable.id.eq(petId)
+                .and(petTable.companyId.eq(companyId)))
             .fetchOne { record ->
                 Owner(
                     id = record[ownerTable.id],

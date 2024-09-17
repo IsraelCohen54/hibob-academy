@@ -1,17 +1,21 @@
 package com.hibob.academy.resource
-
+import com.hibob.academy.dao.Pet
+import com.hibob.academy.service.PetService
+import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
-import java.time.LocalDate
 
-@Path("/pets")
-class PetController {
+
+@Path("/api")
+@Produces("application/json")
+@Consumes("application/json")
+class DaoController @Inject constructor(private val petService: PetService) {
+
 
     // GET request to retrieve pet type by ID
     @GET
     @Path("/{petId}/{type}")
-    @Produces("application/json")
     fun getPetType(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
             Response.status(Status.NOT_FOUND).entity("No pet found").build()
@@ -22,8 +26,6 @@ class PetController {
 
     // POST request to create a new pet
     @POST
-    @Consumes("application/json")
-    @Produces("application/json")
     fun createPet(pet: Pet): Response {
         // Simulate creation logic
         return Response.status(Status.CREATED).entity("Pet ${pet.name} created successfully").build()
@@ -32,8 +34,6 @@ class PetController {
     // PUT request to update an existing pet
     @PUT
     @Path("/{petId}")
-    @Consumes("application/json")
-    @Produces("application/json")
     fun updatePet(@PathParam("petId") petId: Long, pet: Pet): Response {
         return if (petId < 0) {
             Response.status(Status.NOT_FOUND).entity("No pet found to update").build()
@@ -45,7 +45,6 @@ class PetController {
     // DELETE request to delete a pet by ID
     @DELETE
     @Path("/{petId}")
-    @Produces("application/json")
     fun deletePet(@PathParam("petId") petId: Long): Response {
         return if (petId < 0) {
             throw (NotFoundException("No pet with $petId found to delete"))
@@ -57,16 +56,22 @@ class PetController {
     // Example endpoint to throw an exception
     @GET
     @Path("/error")
-    @Produces("application/json")
     fun throwError(): Response {
         throw RuntimeException("An error occurred")
     }
-}
 
-data class Pet(
-    val id: Long,
-    val name: String,
-    val type: String,
-    val companyId: Int,
-    val dateOfArrival: LocalDate
-)
+
+    @POST
+    @Path("/{companyId}/{petId}/adopt/{ownerId}")
+    fun adoptPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+        petService.adoptPet(petId, ownerId, companyId)
+        return Response.ok("Pet $petId adopted by owner $ownerId").build()
+    }
+
+    @GET
+    @Path("/{companyId}/{petId}/owner")
+    fun getOwnerByPetId(@PathParam("petId") petId: Long, @PathParam("companyId") companyId: Long): Response {
+        val owner = petService.getOwnerByPetId(petId, companyId)
+           return Response.ok(owner).build()
+    }
+}
