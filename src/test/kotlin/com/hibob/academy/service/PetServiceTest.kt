@@ -13,7 +13,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import kotlin.random.Random
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -27,7 +26,6 @@ class PetServiceTest {
     fun `adoptPet should throw IllegalStateException if pet already has an owner`() {
         val petId = 1L
         val ownerId = 2L
-
         val fakeAlreadyExistedOwnerId = 3L
 
         whenever(petDao.getPetOwnerId(petId, companyId)).thenReturn(fakeAlreadyExistedOwnerId)
@@ -55,7 +53,7 @@ class PetServiceTest {
     @Test
     fun `getOwnerByPetId should return owner if present`() {
         val petId = 1L
-        val expectedOwner = Owner(id = 1L, name = "John Doe", companyId = companyId, employeeId = "E123")
+        val expectedOwner = Owner(id = 2L, name = "John Doe", companyId = companyId, employeeId = "E123")
 
         whenever(petDao.getPetOwner(petId, companyId)).thenReturn(expectedOwner)
 

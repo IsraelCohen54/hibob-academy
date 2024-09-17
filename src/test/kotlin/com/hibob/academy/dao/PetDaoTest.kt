@@ -13,7 +13,7 @@ import kotlin.random.Random
 @BobDbTest
 class PetDaoTest @Inject constructor(private val sql: DSLContext) {
 
-    private val table = PetTable.petInstance
+    private val petTable = PetTable.petInstance
     private val companyId = Random.nextLong()
     private val petDao = PetDao(sql)
 
@@ -138,8 +138,9 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     @BeforeEach
     @AfterEach
     fun cleanup() {
-        val ownerTable = PetTable.petInstance
-        sql.deleteFrom(table).where(table.companyId.eq(companyId)).execute()
-        sql.deleteFrom(ownerTable).where(table.companyId.eq(companyId)).execute()
+        sql.deleteFrom(petTable).where(petTable.companyId.eq(companyId)).execute()
+
+        val ownerTable = OwnerTable.ownerInstance
+        sql.deleteFrom(ownerTable).where(ownerTable.companyId.eq(companyId)).execute()
     }
 }

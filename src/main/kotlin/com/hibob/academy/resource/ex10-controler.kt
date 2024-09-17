@@ -1,21 +1,19 @@
 package com.hibob.academy.resource
 import com.hibob.academy.dao.Pet
+import com.hibob.academy.dao.PetType
 import com.hibob.academy.service.PetService
 import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-
 
 @Path("/api")
 @Produces("application/json")
 @Consumes("application/json")
 class DaoController @Inject constructor(private val petService: PetService) {
-
 
     // GET request to retrieve pet type by ID
     @GET
@@ -81,8 +79,6 @@ class DaoController @Inject constructor(private val petService: PetService) {
 
     @GET
     @Path("/{ownerId}")
-    @Consumes("application/json")
-    @Produces("application/json")
     fun getOwnerPets(@PathParam("ownerId") ownerId: Long): Response {
         val ownerPets = petService.getOwnerPets(ownerId)
         return Response.ok(ownerPets).build()
