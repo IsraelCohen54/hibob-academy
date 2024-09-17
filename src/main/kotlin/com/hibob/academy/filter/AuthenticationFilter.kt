@@ -20,10 +20,10 @@ class AuthenticationFilter: ContainerRequestFilter {
 
     override fun filter(requestContext: ContainerRequestContext) {
 
-        if (requestContext.uriInfo.path == CREATE_TOKEN_PATH) return
-
-        verify(requestContext.cookies[COOKIE_NAME]?.value)
-        logger.info("Authorized successfully")
+        if (requestContext.uriInfo.path != CREATE_TOKEN_PATH) {
+            verify(requestContext.cookies[COOKIE_NAME]?.value)
+            logger.info("Authorized successfully")
+        }
     }
 
     fun verify(cookie: String?): Jws<Claims> {
