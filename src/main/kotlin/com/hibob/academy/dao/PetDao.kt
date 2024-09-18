@@ -123,4 +123,25 @@ class PetDao(private val sql: DSLContext) {
                 .and(petTable.id.`in`(petsId)))
             .execute()
     }
+
+    fun addMultiplePets(companyId: Long, pets: List<Pet>) {
+        val insert = sql.insertInto(petTable)
+            .columns(petTable.name, petTable.type, petTable.companyId, petTable.dateOfArrival, petTable.ownerId)
+            .values(DSL.param(petTable.name),
+                DSL.param(petTable.type),
+                DSL.param(petTable.companyId),
+                DSL.param(petTable.dateOfArrival),
+                DSL.param(petTable.ownerId))
+            .onConflict(petTable.name, petTable.type, petTable.companyId, petTable.ownerId)
+            .doUpdate()
+            .set(petTable.dateOfArrival, DSL.param(petTable.dateOfArrival))
+
+        val batch = sql.batch(insert)
+
+        pets.forEach { pet ->
+            batch.bind(pet.name, pet.type, pet.companyId, pet.dateOfArrival, pet.ownerId)
+        }
+
+        batch.execute()
+    }
 }

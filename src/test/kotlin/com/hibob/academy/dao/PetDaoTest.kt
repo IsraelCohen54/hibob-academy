@@ -4,6 +4,7 @@ import com.hibob.academy.utils.BobDbTest
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -162,26 +163,50 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
         petDao.insertPet("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7), oldOwnerId)
         petDao.insertPet("Rex3", PetType.CAT, companyId, LocalDate.of(2024, 3, 8), oldOwnerId)
 
-        val petId1
-        val petId2
-        val petId3
+        val petId1 = petDao.getPetId("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6))!!
+        val petId2 = petDao.getPetId("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7))!!
+        val petId3 = petDao.getPetId("Rex3", PetType.CAT, companyId, LocalDate.of(2024, 3, 8))!!
 
         val petsToAdopt = listOf(petId1, petId2)
 
-        // Call adoptMultiplePets to update ownerId for the selected pets
         petDao.adoptMultiplePets(companyId, newOwnerId, petsToAdopt)
 
-        // Fetch the updated pets from the database
-        val updatedPet1 = petDao.getPetById(petId1)
-        val updatedPet2 = petDao.getPetById(petId2)
-        val notUpdatedPet = petDao.getPetById(petId3)
+        assertEquals(newOwnerId, petDao.getPetOwnerId(petId1, companyId))
+        assertEquals(newOwnerId, petDao.getPetOwnerId(petId2, companyId))
 
-        // Assert that the ownerId for the selected pets was updated
-        assertEquals(newOwnerId, updatedPet1?.ownerId)
-        assertEquals(newOwnerId, updatedPet2?.ownerId)
+        assertEquals(oldOwnerId, petDao.getPetOwnerId(petId3, companyId))
+    }
 
-        // Assert that the ownerId for the other pet remains unchanged
-        assertEquals(oldOwnerId, notUpdatedPet?.ownerId)
+
+    @Test
+    fun `addMultiplePets should add or update pets correctly - validation using the conflict implemented for date`() {
+
+        petDao.insertPet("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6), 101)
+        petDao.insertPet("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7), 102)
+
+        val petId1 = petDao.getPetId("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6))!!
+        val petId2 = petDao.getPetId("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7))!!
+
+        val pets = listOf(
+            Pet(id = petId1, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2023, 1, 6), ownerId = 101),
+            Pet(id = petId2, name = "Whiskers", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2023, 2, 7), ownerId = 102)
+        )
+
+        petDao.addMultiplePets(companyId = companyId, pets = pets)
+
+        val result = sql.selectFrom(petTable)
+            .where(petTable.id.`in`(petId1, petId2))
+            .fetchInto(Pet::class.java)
+
+        val resultMap = result.associateBy { it.id }
+
+        assertEquals(pets.size, result.size, "The number of records should match")
+
+        pets.forEach { expectedPet ->
+            val resultPet = resultMap[expectedPet.id]
+            assertNotNull(resultPet, "Pet with ID ${expectedPet.id} should exist")
+            assertEquals(expectedPet, resultPet, "Pet with ID ${expectedPet.id} should match")
+        }
     }
 
 

@@ -90,13 +90,20 @@ class PetController (private val petService: PetService) {
     }
 
     @PUT
-    @Path("/set-pets-owner/{companyId}/{ownerId}")
-    fun setOwnerAdoptPets(
+    @Path("/adopt-multiple-pets/{companyId}/{ownerId}")
+    fun adoptMultiplePets(
         @PathParam("ownerId") ownerId: Long,
         @PathParam("companyId") companyId: Long,
         petList: List<Long>
     ): Response {
-        petService.setPetsOwner(ownerId, companyId, petList)
+        petService.adoptMultiplePets(ownerId, companyId, petList)
+        return Response.ok().build()
+    }
+
+    @PUT
+    @Path("/add-multiple-pets/{companyId}")
+    fun addMultiplePets(@PathParam("companyId") companyId: Long, petList: List<Pet>): Response {
+        petService.addMultiplePets(companyId, petList)
         return Response.ok().build()
     }
 }

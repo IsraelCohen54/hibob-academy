@@ -28,4 +28,16 @@ class PetService(private val petDao: PetDao) {
     fun countPetsByType(companyId: Long): Map<PetType, Int> {
         return petDao.countPetsByType(companyId)
     }
+
+    fun adoptMultiplePets(companyId: Long, ownerId: Long, petsId: List<Long>) {
+        if (petsId.isEmpty()) {
+            throw IllegalArgumentException("Pets list cannot be empty.")
+        }
+        petDao.adoptMultiplePets(companyId, ownerId, petsId)
+    }
+
+    // todo add test
+    fun addMultiplePets(companyId: Long, petList: List<Pet>) {
+        petDao.addMultiplePets(companyId, petList)
+    }
 }
