@@ -1,17 +1,17 @@
 package com.hibob.academy.dao
 
 import com.hibob.academy.utils.BobDbTest
-import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import kotlin.random.Random
 
 @BobDbTest
-class PetDaoTest @Inject constructor(private val sql: DSLContext) {
+class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
     private val petTable = PetTable.petInstance
     private val companyId = Random.nextLong()
@@ -119,13 +119,13 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
     }
 
     @Test
-    fun `test getOwnerPets returns list of pets` () {
+    fun `test getPetsByOwnerId returns list of pets` () {
         petDao.insertPet(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101)
         petDao.insertPet(name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101)
         petDao.insertPet(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
         petDao.insertPet(name = "Rex4", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
 
-        val ownerPets = petDao.getOwnerPets(101, companyId)
+        val ownerPets = petDao.getPetsByOwnerId(101, companyId)
 
         val expectedOwnerPets = listOf(
             Pet(id = petDao.getPetId(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6))!!, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101),
@@ -134,6 +134,25 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         )
         assertEquals(expectedOwnerPets, ownerPets)
     }
+
+    @Test
+    fun `test countPetsByType returns correct pet counts by type`() {
+        // Insert some pets into the database
+        petDao.insertPet(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101)
+        petDao.insertPet(name = "Fluffy", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101)
+        petDao.insertPet(name = "Max", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 102)
+        petDao.insertPet(name = "Buddy", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
+
+        val petCountByType = petDao.countPetsByType(companyId)
+
+        val expectedPetCountByType = mapOf(
+            PetType.DOG to 3,
+            PetType.CAT to 1
+        )
+
+        assertEquals(expectedPetCountByType, petCountByType)
+    }
+
 
     @BeforeEach
     @AfterEach

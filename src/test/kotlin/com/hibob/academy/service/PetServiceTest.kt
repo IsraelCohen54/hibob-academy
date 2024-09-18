@@ -75,7 +75,7 @@ class PetServiceTest {
     }
 
     @Test
-    fun `test getOwnerPets returns list of pets`() {
+    fun `test getPetsByOwnerId returns list of pets`() {
         val ownerId = 101L
         val pets = listOf(
             Pet(id = 1L, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = ownerId),
@@ -83,9 +83,9 @@ class PetServiceTest {
             Pet(id = 3L, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = ownerId)
         )
 
-        whenever(petDao.getOwnerPets(ownerId, companyId)).thenReturn(pets)
+        whenever(petDao.getPetsByOwnerId(ownerId, companyId)).thenReturn(pets)
 
-        val result = petService.getOwnerPets(ownerId, companyId)
+        val result = petService.getPetsByOwnerId(ownerId, companyId)
 
         assertEquals(pets, result)
     }
@@ -108,5 +108,18 @@ class PetServiceTest {
             PetType.CAT to (petsByType[1].size)
         )
         assertEquals(expected, resultedMap)
+    }
+
+    @Test
+    fun `countPetsByType returns correct counts`() {
+        val petCount = mapOf(PetType.CAT to 5, PetType.DOG to 3)
+
+        whenever(petDao.countPetsByType(companyId)).thenReturn(petCount)
+
+        val result = petService.countPetsByType(companyId)
+
+        assertEquals(petCount, result)
+
+        verify(petDao).countPetsByType(companyId)
     }
 }

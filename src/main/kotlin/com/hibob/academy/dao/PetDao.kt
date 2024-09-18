@@ -1,14 +1,14 @@
 package com.hibob.academy.dao
 
-import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
+import org.jooq.impl.DSL
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class PetDao @Inject constructor(private val sql: DSLContext) {
+class PetDao(private val sql: DSLContext) {
 
     private val petTable = PetTable.petInstance
     private val ownerTable = OwnerTable.ownerInstance
@@ -42,13 +42,15 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .fetch(petTableMapper)
     }
 
-    fun getPetId(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate) :Long? {
+    fun getPetId(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate): Long? {
         return sql.select(petTable.id)
             .from(petTable)
-            .where(petTable.name.eq(name)
-            .and(petTable.companyId.eq(companyId))
-            .and(petTable.type.eq(type.toString()))
-            .and(petTable.dateOfArrival.eq(dateOfArrival)))
+            .where(
+                petTable.name.eq(name)
+                    .and(petTable.companyId.eq(companyId))
+                    .and(petTable.type.eq(type.toString()))
+                    .and(petTable.dateOfArrival.eq(dateOfArrival))
+            )
             .limit(1)
             .fetchOne(petTable.id)
     }
@@ -56,16 +58,20 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
     fun adopt(petId: Long, ownerId: Long, companyId: Long) {
         sql.update(petTable)
             .set(petTable.ownerId, ownerId)
-            .where(petTable.id.eq(petId)
-                .and(petTable.companyId.eq(companyId)))
+            .where(
+                petTable.id.eq(petId)
+                    .and(petTable.companyId.eq(companyId))
+            )
             .execute()
     }
 
-    fun getPetOwnerId(petId: Long, companyId: Long) :Long? {
+    fun getPetOwnerId(petId: Long, companyId: Long): Long? {
         return sql.select(petTable.ownerId)
             .from(petTable)
-            .where(petTable.id.eq(petId)
-                .and(petTable.companyId.eq(companyId)))
+            .where(
+                petTable.id.eq(petId)
+                    .and(petTable.companyId.eq(companyId))
+            )
             .fetchOne(petTable.ownerId)
     }
 
@@ -74,8 +80,10 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             .from(petTable)
             .join(ownerTable)
             .on(petTable.ownerId.eq(ownerTable.id))
-            .where(petTable.id.eq(petId)
-                .and(petTable.companyId.eq(companyId)))
+            .where(
+                petTable.id.eq(petId)
+                    .and(petTable.companyId.eq(companyId))
+            )
             .fetchOne { record ->
                 Owner(
                     id = record[ownerTable.id],
@@ -86,11 +94,26 @@ class PetDao @Inject constructor(private val sql: DSLContext) {
             }
     }
 
-    fun getOwnerPets(ownerId: Long, companyId: Long): List<Pet> {
+    fun getPetsByOwnerId(ownerId: Long, companyId: Long): List<Pet> {
         return sql.select()
             .from(petTable)
-            .where(petTable.ownerId.eq(ownerId)
-                .and(petTable.companyId.eq(companyId)))
+            .where(
+                petTable.ownerId.eq(ownerId)
+                    .and(petTable.companyId.eq(companyId))
+            )
             .fetch(petTableMapper)
     }
+
+    fun countPetsByType(companyId: Long): Map<PetType, Int> {
+        val count = DSL.count(petTable)
+        return sql.select(petTable.type, count)
+            .from(petTable)
+            .where(petTable.companyId.eq(companyId))
+            .groupBy(petTable.type)
+            .fetch()
+            .intoMap(
+                { record -> PetType.valueOf(record[petTable.type].toString()) },
+                { record -> record[count] })
+    }
+
 }

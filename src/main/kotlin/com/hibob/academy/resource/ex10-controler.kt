@@ -1,19 +1,14 @@
 package com.hibob.academy.resource
 import com.hibob.academy.dao.Pet
-import com.hibob.academy.dao.PetType
 import com.hibob.academy.service.PetService
-import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
 
-@Path("/api")
+@Path("/api/pets")
 @Produces("application/json")
 @Consumes("application/json")
-class DaoController @Inject constructor(private val petService: PetService) {
+class PetController (private val petService: PetService) {
 
     // GET request to retrieve pet type by ID
     @GET
@@ -40,7 +35,7 @@ class DaoController @Inject constructor(private val petService: PetService) {
         return if (petId < 0) {
             Response.status(Status.NOT_FOUND).entity("No pet found to update").build()
         } else {
-            Response.ok("Pet ${petId} updated successfully").build()
+            Response.ok("Pet $petId updated successfully").build()
         }
     }
 
@@ -78,16 +73,15 @@ class DaoController @Inject constructor(private val petService: PetService) {
     }
 
     @GET
-    @Path("/{companyId}/{ownerId}")
+    @Path("/company/{companyId}/owner/{ownerId}")
     fun getOwnerPets(@PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
-        val ownerPets = petService.getOwnerPets(ownerId, companyId)
+        val ownerPets = petService.getPetsByOwnerId(ownerId, companyId)
         return Response.ok(ownerPets).build()
     }
 
-    @GetMapping("/{companyId}/countByType")
-    fun countPetsByType(@RequestParam companyId: Long): ResponseEntity<Map<PetType, Int>> {
-        return ResponseEntity.ok(petService.countPetsByType(companyId))
+    @GET
+    @Path("/count-by-type/company/{companyId}")
+    fun countPetsByType(@PathParam("companyId") companyId: Long): Response {
+        return Response.ok(petService.countPetsByType(companyId)).build()
     }
-
-
 }
