@@ -21,8 +21,8 @@ class PetService(private val petDao: PetDao) {
             ?: throw IllegalStateException("No owner with ID $petId")
     }
 
-    fun getOwnerPets(ownerId: Long): List<Pet> {
-        return petDao.getOwnerPets(ownerId)
+    fun getOwnerPets(ownerId: Long, companyId: Long): List<Pet> {
+        return petDao.getOwnerPets(ownerId, companyId)
     }
 
     fun countPetsByType(companyId: Long): Map<PetType, Int> {

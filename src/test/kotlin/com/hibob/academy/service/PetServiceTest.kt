@@ -83,9 +83,9 @@ class PetServiceTest {
             Pet(id = 3L, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = ownerId)
         )
 
-        whenever(petDao.getOwnerPets(eq(ownerId))).thenReturn(pets)
+        whenever(petDao.getOwnerPets(ownerId, companyId)).thenReturn(pets)
 
-        val result = petService.getOwnerPets(ownerId)
+        val result = petService.getOwnerPets(ownerId, companyId)
 
         assertEquals(pets, result)
     }

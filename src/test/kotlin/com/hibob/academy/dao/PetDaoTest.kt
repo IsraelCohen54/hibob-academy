@@ -125,7 +125,7 @@ class PetDaoTest @Inject constructor(private val sql: DSLContext) {
         petDao.insertPet(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
         petDao.insertPet(name = "Rex4", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
 
-        val ownerPets = petDao.getOwnerPets(101)
+        val ownerPets = petDao.getOwnerPets(101, companyId)
 
         val expectedOwnerPets = listOf(
             Pet(id = petDao.getPetId(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6))!!, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101),

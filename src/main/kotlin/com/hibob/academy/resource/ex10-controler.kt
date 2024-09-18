@@ -78,14 +78,16 @@ class DaoController @Inject constructor(private val petService: PetService) {
     }
 
     @GET
-    @Path("/{ownerId}")
-    fun getOwnerPets(@PathParam("ownerId") ownerId: Long): Response {
-        val ownerPets = petService.getOwnerPets(ownerId)
+    @Path("/{companyId}/{ownerId}")
+    fun getOwnerPets(@PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+        val ownerPets = petService.getOwnerPets(ownerId, companyId)
         return Response.ok(ownerPets).build()
     }
 
-    @GetMapping("/countByType")
+    @GetMapping("/{companyId}/countByType")
     fun countPetsByType(@RequestParam companyId: Long): ResponseEntity<Map<PetType, Int>> {
         return ResponseEntity.ok(petService.countPetsByType(companyId))
     }
+
+
 }
