@@ -91,26 +91,6 @@ class PetServiceTest {
     }
 
     @Test
-    fun `test countPetsByType returns correct pet counts`() {
-        val petsByType: List<List<Pet>> = listOf(listOf(
-                Pet(id = 1L, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = null),
-                Pet(id = 3L, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = null))
-            , listOf(
-                Pet(id = 2L, name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = null)
-            )
-        )
-        whenever(petDao.getPetsByType(PetType.DOG, companyId)).thenReturn(petsByType[0])
-        whenever(petDao.getPetsByType(PetType.CAT, companyId)).thenReturn(petsByType[1])
-
-        val resultedMap = petService.countPetsByType(companyId)
-        val expected = mapOf(
-            PetType.DOG to (petsByType[0].size),
-            PetType.CAT to (petsByType[1].size)
-        )
-        assertEquals(expected, resultedMap)
-    }
-
-    @Test
     fun `countPetsByType returns correct counts`() {
         val petCount = mapOf(PetType.CAT to 5, PetType.DOG to 3)
 
