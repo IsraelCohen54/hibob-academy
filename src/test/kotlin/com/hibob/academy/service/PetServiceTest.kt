@@ -102,4 +102,35 @@ class PetServiceTest {
 
         verify(petDao).countPetsByType(companyId)
     }
+
+    @Test
+    fun `test adoptMultiplePets calls DAO with correct parameters`() {
+
+        val ownerId = 202L
+        val petsId = listOf(1L, 2L, 3L)
+
+        petService.adoptMultiplePets(companyId, ownerId, petsId)
+        verify(petDao).adoptMultiplePets(companyId, ownerId, petsId)
+    }
+
+    @Test
+    fun `test adoptMultiplePets throws exception for empty pet list`() {
+
+        val ownerId = 202L
+        val emptyPetsId = listOf<Long>()
+
+        assertThrows<IllegalArgumentException> {
+            petService.adoptMultiplePets(companyId, ownerId, emptyPetsId)
+        }
+    }
+
+    @Test
+    fun `test addMultiplePets with empty pet list`() {
+
+        val emptyPetList = listOf<Pet>()
+
+        petService.addMultiplePets(companyId, emptyPetList)
+
+        verify(petDao).addMultiplePets(companyId, emptyPetList)
+    }
 }
