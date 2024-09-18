@@ -153,6 +153,37 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
         assertEquals(expectedPetCountByType, petCountByType)
     }
 
+    @Test
+    fun `test adoptMultiplePets updates owner for multiple pets`() {
+        val oldOwnerId = 101L
+        val newOwnerId = 202L
+
+        petDao.insertPet("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6), oldOwnerId)
+        petDao.insertPet("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7), oldOwnerId)
+        petDao.insertPet("Rex3", PetType.CAT, companyId, LocalDate.of(2024, 3, 8), oldOwnerId)
+
+        val petId1
+        val petId2
+        val petId3
+
+        val petsToAdopt = listOf(petId1, petId2)
+
+        // Call adoptMultiplePets to update ownerId for the selected pets
+        petDao.adoptMultiplePets(companyId, newOwnerId, petsToAdopt)
+
+        // Fetch the updated pets from the database
+        val updatedPet1 = petDao.getPetById(petId1)
+        val updatedPet2 = petDao.getPetById(petId2)
+        val notUpdatedPet = petDao.getPetById(petId3)
+
+        // Assert that the ownerId for the selected pets was updated
+        assertEquals(newOwnerId, updatedPet1?.ownerId)
+        assertEquals(newOwnerId, updatedPet2?.ownerId)
+
+        // Assert that the ownerId for the other pet remains unchanged
+        assertEquals(oldOwnerId, notUpdatedPet?.ownerId)
+    }
+
 
     @BeforeEach
     @AfterEach

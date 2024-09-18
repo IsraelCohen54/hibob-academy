@@ -60,7 +60,11 @@ class PetController (private val petService: PetService) {
 
     @POST
     @Path("/{companyId}/{petId}/adopt/{ownerId}")
-    fun adoptPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+    fun adoptPet(
+        @PathParam("petId") petId: Long,
+        @PathParam("ownerId") ownerId: Long,
+        @PathParam("companyId") companyId: Long
+    ): Response {
         petService.adoptPet(petId, ownerId, companyId)
         return Response.ok("Pet $petId adopted by owner $ownerId").build()
     }
@@ -69,7 +73,7 @@ class PetController (private val petService: PetService) {
     @Path("/{companyId}/{petId}/owner")
     fun getOwnerByPetId(@PathParam("petId") petId: Long, @PathParam("companyId") companyId: Long): Response {
         val owner = petService.getOwnerByPetId(petId, companyId)
-           return Response.ok(owner).build()
+        return Response.ok(owner).build()
     }
 
     @GET
@@ -83,5 +87,16 @@ class PetController (private val petService: PetService) {
     @Path("/count-by-type/company/{companyId}")
     fun countPetsByType(@PathParam("companyId") companyId: Long): Response {
         return Response.ok(petService.countPetsByType(companyId)).build()
+    }
+
+    @PUT
+    @Path("/set-pets-owner/{companyId}/{ownerId}")
+    fun setOwnerAdoptPets(
+        @PathParam("ownerId") ownerId: Long,
+        @PathParam("companyId") companyId: Long,
+        petList: List<Long>
+    ): Response {
+        petService.setPetsOwner(ownerId, companyId, petList)
+        return Response.ok().build()
     }
 }
