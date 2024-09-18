@@ -30,13 +30,13 @@ class AuthenticationFilter: ContainerRequestFilter {
             try {
                 Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(it)
             } catch (e: Exception) {
-                requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
-                logger.warn("Authorized failure - exception: $e")
+                extracted(requestContext, e)
             }
-        } ?:
-        run {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
-            logger.info("Authorized failure")
+        } ?: extracted(requestContext, Exception("No cookie"))
         }
+
+    private fun extracted(requestContext: ContainerRequestContext, e: Exception) {
+        requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
+        logger.warn("Authorized failure - exception: $e")
     }
 }
