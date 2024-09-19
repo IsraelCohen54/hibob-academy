@@ -36,7 +36,6 @@ class PetService(private val petDao: PetDao) {
         petDao.adoptMultiplePets(companyId, ownerId, petsId)
     }
 
-    // todo add test
     fun addMultiplePets(companyId: Long, petList: List<Pet>) {
         petDao.addMultiplePets(companyId, petList)
     }
