@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.Response.Status
 @Path("/api/pets")
 @Produces("application/json")
 @Consumes("application/json")
-class PetController (private val petService: PetService) {
+class PetResource (private val petService: PetService) {
 
     // GET request to retrieve pet type by ID
     @GET
@@ -100,7 +100,7 @@ class PetController (private val petService: PetService) {
         return Response.ok().build()
     }
 
-    @PUT
+    @POST
     @Path("/add-multiple-pets/{companyId}")
     fun addMultiplePets(@PathParam("companyId") companyId: Long, petList: List<Pet>): Response {
         petService.addMultiplePets(companyId, petList)

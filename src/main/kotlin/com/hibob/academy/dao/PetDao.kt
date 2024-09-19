@@ -23,7 +23,7 @@ class PetDao(private val sql: DSLContext) {
         )
     }
 
-    fun insertPet(petWithoutId: PetWithoutId): Long? {
+    fun insertPet(petWithoutId: PetWithoutId): Long {
         return sql.insertInto(petTable)
             .set(petTable.name, petWithoutId.name)
             .set(petTable.type, petWithoutId.type.toString())
@@ -31,7 +31,9 @@ class PetDao(private val sql: DSLContext) {
             .set(petTable.dateOfArrival, petWithoutId.dateOfArrival)
             .set(petTable.ownerId, petWithoutId.ownerId)
             .returning(petTable.id)
-            .fetchOne()?.get(petTable.id)
+            .fetchOne()
+            ?.get(petTable.id)
+            ?: throw IllegalStateException("Failed to retrieve the generated ID.")
     }
 
     fun getPetsByType(type: PetType, companyId: Long): List<Pet> {
