@@ -18,32 +18,41 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
     private val companyId = Random.nextLong()
     private val petDao = PetDao(sql)
 
+    // Test fields
+    private val ownerId1 = 101L
+    private val ownerId2 = 102L
+    private val petWithoutId1 = PetWithoutId (name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1), ownerId1)
+    private val petWithoutId2 = PetWithoutId (name = "Whiskers", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2024,2,2),ownerId2)
+    private val petWithoutId3 = PetWithoutId(name = "Rexi", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2), ownerId1)
+    private val ownerlessPetWithoutId3 = PetWithoutId(name = "Rexi", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2), null)
+
     @Test
     fun `insert pet test`() {
 
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
+        petDao.insertPet(petWithoutId1)
 
         val insertedPet = petDao.getPetsByType(PetType.DOG, companyId)
-        val originPet = Pet(petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))!!, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1), null)
+        val petId = petDao.getPetId(petWithoutId1)!!
+        val originPet = Pet(petId, petWithoutId1)
         assertEquals(originPet, insertedPet[0])
     }
 
     @Test
     fun `get pets by type test`() {
 
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1,1))
-        petDao.insertPet(name = "Whiskers", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2024,2,2))
+        petDao.insertPet(petWithoutId1)
+        petDao.insertPet(petWithoutId2)
 
         val fetchedDogs = petDao.getPetsByType(PetType.DOG, companyId)
         val fetchedCats = petDao.getPetsByType(PetType.CAT, companyId)
 
-        val dog1Id = petDao.getPetId("Rex", PetType.DOG, companyId, LocalDate.of(2024,1,1))
-        val cat2Id = petDao.getPetId("Whiskers", PetType.CAT, companyId, LocalDate.of(2024,2,2))
+        val dog1Id = petDao.getPetId(petWithoutId1)
+        val cat2Id = petDao.getPetId(petWithoutId2)
 
         dog1Id?.let {
-            val rexDog = Pet(dog1Id, "Rex", PetType.DOG, companyId, LocalDate.of(2024,1,1), null)
+            val rexDog = Pet(dog1Id, petWithoutId1)
             cat2Id?.let{
-                val whiskersCat = Pet(cat2Id, "Whiskers", PetType.CAT, companyId, LocalDate.of(2024,2,2), null)
+                val whiskersCat = Pet(cat2Id, petWithoutId2)
 
                 assertEquals(rexDog, fetchedDogs[0])
                 assertEquals(whiskersCat, fetchedCats[0])
@@ -63,12 +72,13 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
     @Test
     fun `get Pet Id`() {
 
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
-        petDao.insertPet(name = "Rexi", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2))
+        petDao.insertPet(petWithoutId1)
 
-        val petId: Long? = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1))
+        petDao.insertPet(petWithoutId3)
+
+        val petId: Long? = petDao.getPetId(petWithoutId1)
         petId?.let {
-            val pet = Pet(id = petId, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 1), null)
+            val pet = Pet(id = petId, petWithoutId1)
 
             val pets = petDao.getPetsByType(PetType.DOG, companyId)
 
@@ -78,7 +88,7 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
     @Test
     fun `test adopt updates ownerId`() {
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
+        petDao.insertPet(petWithoutId1)
 
         val petId = petDao.getPetsByType(PetType.DOG, companyId).first().id
 
@@ -96,10 +106,10 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
         ownerDao.insertOwner("Bob1", companyId, "123")
 
         val ownerId = ownerDao.getOwnerId(companyId, "123")
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId,
-            dateOfArrival = LocalDate.of(2024, 1, 1), ownerId = ownerId)
+        val petWithoutId4 = PetWithoutId(name = "Rexi", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024,1, 2), ownerId)
+        petDao.insertPet(petWithoutId4)
 
-        val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
+        val petId = petDao.getPetId(petWithoutId1)
         petId?.let{
             val petOwner = petDao.getPetOwner(petId, companyId)
             ownerId?.let {
@@ -110,8 +120,8 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
     @Test
     fun `test getPetOwnerId returns null for pet without owner`() {
-        petDao.insertPet(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
-        val petId = petDao.getPetId(name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 1))
+        petDao.insertPet(ownerlessPetWithoutId3)
+        val petId = petDao.getPetId(ownerlessPetWithoutId3)
 
         petId?.let {
             val fetchedOwnerId = petDao.getPetOwnerId(petId, companyId)
@@ -121,33 +131,31 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
     @Test
     fun `test getPetsByOwnerId returns list of pets` () {
-        petDao.insertPet(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101)
-        petDao.insertPet(name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101)
-        petDao.insertPet(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
-        petDao.insertPet(name = "Rex4", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
 
-        val ownerPets = petDao.getPetsByOwnerId(101, companyId)
+        petDao.insertPet(petWithoutId1)
+        petDao.insertPet(petWithoutId2)
+        petDao.insertPet(petWithoutId3)
+
+        val ownerPets = petDao.getPetsByOwnerId(ownerId1, companyId)
 
         val expectedOwnerPets = listOf(
-            Pet(id = petDao.getPetId(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6))!!, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101),
-            Pet(id = petDao.getPetId(name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5))!!, name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101),
-            Pet(id = petDao.getPetId(name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5))!!, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 101)
+            Pet(id = petDao.getPetId(petWithoutId1)!!, petWithoutId1),
+            Pet(id = petDao.getPetId(petWithoutId3)!!, petWithoutId3),
         )
         assertEquals(expectedOwnerPets, ownerPets)
     }
 
     @Test
     fun `test countPetsByType returns correct pet counts by type`() {
-        // Insert some pets into the database
-        petDao.insertPet(name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = 101)
-        petDao.insertPet(name = "Fluffy", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = 101)
-        petDao.insertPet(name = "Max", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 102)
-        petDao.insertPet(name = "Buddy", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = 100)
+
+        petDao.insertPet(petWithoutId1)
+        petDao.insertPet(petWithoutId2)
+        petDao.insertPet(petWithoutId3)
 
         val petCountByType = petDao.countPetsByType(companyId)
 
         val expectedPetCountByType = mapOf(
-            PetType.DOG to 3,
+            PetType.DOG to 2,
             PetType.CAT to 1
         )
 
@@ -156,56 +164,54 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
     @Test
     fun `test adoptMultiplePets updates owner for multiple pets`() {
-        val oldOwnerId = 101L
         val newOwnerId = 202L
 
-        petDao.insertPet("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6), oldOwnerId)
-        petDao.insertPet("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7), oldOwnerId)
-        petDao.insertPet("Rex3", PetType.CAT, companyId, LocalDate.of(2024, 3, 8), oldOwnerId)
+        petDao.insertPet(petWithoutId1)
+        petDao.insertPet(petWithoutId2)
+        petDao.insertPet(petWithoutId3)
 
-        val petId1 = petDao.getPetId("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6))!!
-        val petId2 = petDao.getPetId("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7))!!
-        val petId3 = petDao.getPetId("Rex3", PetType.CAT, companyId, LocalDate.of(2024, 3, 8))!!
+        val petId1 = petDao.getPetId(petWithoutId1)!!
+        val petId2 = petDao.getPetId(petWithoutId2)!!
+        val petId3 = petDao.getPetId(petWithoutId3)!!
 
-        val petsToAdopt = listOf(petId1, petId2)
+        val petsToAdopt = listOf(petId1, petId3)
 
         petDao.adoptMultiplePets(companyId, newOwnerId, petsToAdopt)
 
         assertEquals(newOwnerId, petDao.getPetOwnerId(petId1, companyId))
-        assertEquals(newOwnerId, petDao.getPetOwnerId(petId2, companyId))
+        assertEquals(newOwnerId, petDao.getPetOwnerId(petId3, companyId))
 
-        assertEquals(oldOwnerId, petDao.getPetOwnerId(petId3, companyId))
+        assertEquals(petWithoutId2.ownerId, petDao.getPetOwnerId(petId2, companyId))
     }
 
 
     @Test
     fun `addMultiplePets should add or update pets correctly - validation using the conflict implemented for date`() {
 
-        petDao.insertPet("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6), 101)
-        petDao.insertPet("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7), 102)
+        petDao.insertPet(petWithoutId1)
+        petDao.insertPet(petWithoutId3)
 
-        val petId1 = petDao.getPetId("Rex1", PetType.DOG, companyId, LocalDate.of(2024, 1, 6))!!
-        val petId2 = petDao.getPetId("Rex2", PetType.CAT, companyId, LocalDate.of(2024, 2, 7))!!
+        val petId1 = petDao.getPetId(petWithoutId1)!!
+        val petId2 = petDao.getPetId(petWithoutId3)!!
 
         val pets = listOf(
-            Pet(id = petId1, name = "Rex", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2023, 1, 6), ownerId = 101),
-            Pet(id = petId2, name = "Whiskers", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2023, 2, 7), ownerId = 102)
-        )
+            Pet(id = petId1, petWithoutId1),
+            Pet(id = petId2, petWithoutId3))
 
         petDao.addMultiplePets(companyId = companyId, pets = pets)
 
-        val result = sql.selectFrom(petTable)
+        val fetchedPets = sql.selectFrom(petTable)
             .where(petTable.id.`in`(petId1, petId2))
             .fetchInto(Pet::class.java)
 
-        val resultMap = result.associateBy { it.id }
+        val fetchedPetsById = fetchedPets.associateBy { it.id }
 
-        assertEquals(pets.size, result.size, "The number of records should match")
+        assertEquals(pets.size, fetchedPets.size, "The number of records should match")
 
         pets.forEach { expectedPet ->
-            val resultPet = resultMap[expectedPet.id]
-            assertNotNull(resultPet, "Pet with ID ${expectedPet.id} should exist")
-            assertEquals(expectedPet, resultPet, "Pet with ID ${expectedPet.id} should match")
+            val fetchedPet = fetchedPetsById[expectedPet.id]
+            assertNotNull(fetchedPet, "Pet with ID ${expectedPet.id} should exist")
+            assertEquals(expectedPet, fetchedPet, "Pet with ID ${expectedPet.id} should match")
         }
     }
 

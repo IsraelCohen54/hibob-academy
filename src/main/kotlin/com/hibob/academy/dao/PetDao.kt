@@ -5,7 +5,6 @@ import org.jooq.Record
 import org.jooq.RecordMapper
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 
 @Component
 class PetDao(private val sql: DSLContext) {
@@ -24,13 +23,13 @@ class PetDao(private val sql: DSLContext) {
         )
     }
 
-    fun insertPet(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate, ownerId: Long? = null) {
+    fun insertPet(petWithoutId : PetWithoutId) {
         sql.insertInto(petTable)
-            .set(petTable.name, name)
-            .set(petTable.type, type.toString())
-            .set(petTable.companyId, companyId)
-            .set(petTable.dateOfArrival, dateOfArrival)
-            .set(petTable.ownerId, ownerId)
+            .set(petTable.name, petWithoutId.name)
+            .set(petTable.type, petWithoutId.type.toString())
+            .set(petTable.companyId, petWithoutId.companyId)
+            .set(petTable.dateOfArrival, petWithoutId.dateOfArrival)
+            .set(petTable.ownerId, petWithoutId.ownerId)
             .execute()
     }
 
@@ -42,14 +41,14 @@ class PetDao(private val sql: DSLContext) {
             .fetch(petTableMapper)
     }
 
-    fun getPetId(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate): Long? {
+    fun getPetId(petWithoutId : PetWithoutId): Long? {
         return sql.select(petTable.id)
             .from(petTable)
             .where(
-                petTable.name.eq(name)
-                    .and(petTable.companyId.eq(companyId))
-                    .and(petTable.type.eq(type.toString()))
-                    .and(petTable.dateOfArrival.eq(dateOfArrival))
+                petTable.name.eq(petWithoutId.name)
+                    .and(petTable.companyId.eq(petWithoutId.companyId))
+                    .and(petTable.type.eq(petWithoutId.type.toString()))
+                    .and(petTable.dateOfArrival.eq(petWithoutId.dateOfArrival))
             )
             .limit(1)
             .fetchOne(petTable.id)
@@ -132,9 +131,6 @@ class PetDao(private val sql: DSLContext) {
                 DSL.param(petTable.companyId),
                 DSL.param(petTable.dateOfArrival),
                 DSL.param(petTable.ownerId))
-            .onConflict(petTable.name, petTable.type, petTable.companyId, petTable.ownerId)
-            .doUpdate()
-            .set(petTable.dateOfArrival, DSL.param(petTable.dateOfArrival))
 
         val batch = sql.batch(insert)
 

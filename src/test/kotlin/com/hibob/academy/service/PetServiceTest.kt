@@ -22,10 +22,17 @@ class PetServiceTest {
     private val petService = PetService(petDao)
     private val companyId = Random.nextLong()
 
+    // Test variables:
+    private val ownerId = 101L
+    private val pet1 = Pet(id = 1L, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = ownerId)
+    private val pet2 = Pet(id = 2L, name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = ownerId)
+    private val pet3 = Pet(id = 3L, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = ownerId)
+
+    private val petId = 1L
+
     @Test
     fun `adoptPet should throw IllegalStateException if pet already has an owner`() {
-        val petId = 1L
-        val ownerId = 2L
+
         val fakeAlreadyExistedOwnerId = 3L
 
         whenever(petDao.getPetOwnerId(petId, companyId)).thenReturn(fakeAlreadyExistedOwnerId)
@@ -40,8 +47,6 @@ class PetServiceTest {
 
     @Test
     fun `adoptPet should call adopt on PetDao if pet does not have an owner`() {
-        val petId = 1L
-        val ownerId = 2L
 
         whenever(petDao.getPetOwnerId(petId, companyId)).thenReturn(null)
 
@@ -52,8 +57,8 @@ class PetServiceTest {
 
     @Test
     fun `getOwnerByPetId should return owner if present`() {
-        val petId = 1L
-        val expectedOwner = Owner(id = 2L, name = "John Doe", companyId = companyId, employeeId = "E123")
+
+        val expectedOwner = Owner(id = ownerId, name = "John Doe", companyId = companyId, employeeId = "E123")
 
         whenever(petDao.getPetOwner(petId, companyId)).thenReturn(expectedOwner)
 
@@ -65,7 +70,6 @@ class PetServiceTest {
     @Test
     fun `getOwnerByPetId should throw IllegalStateException when owner does not exist`() {
 
-        val petId = 1L
         whenever(petDao.getPetOwner(petId, companyId)).thenReturn(null)
 
         val exception = assertThrows<IllegalStateException> {
@@ -76,12 +80,7 @@ class PetServiceTest {
 
     @Test
     fun `test getPetsByOwnerId returns list of pets`() {
-        val ownerId = 101L
-        val pets = listOf(
-            Pet(id = 1L, name = "Rex1", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2024, 1, 6), ownerId = ownerId),
-            Pet(id = 2L, name = "Rex2", type = PetType.CAT, companyId = companyId, dateOfArrival = LocalDate.of(2022, 2, 5), ownerId = ownerId),
-            Pet(id = 3L, name = "Rex3", type = PetType.DOG, companyId = companyId, dateOfArrival = LocalDate.of(2026, 3, 5), ownerId = ownerId)
-        )
+        val pets = listOf(pet1, pet2, pet3)
 
         whenever(petDao.getPetsByOwnerId(ownerId, companyId)).thenReturn(pets)
 
@@ -106,7 +105,6 @@ class PetServiceTest {
     @Test
     fun `test adoptMultiplePets calls DAO with correct parameters`() {
 
-        val ownerId = 202L
         val petsId = listOf(1L, 2L, 3L)
 
         petService.adoptMultiplePets(companyId, ownerId, petsId)
@@ -116,7 +114,6 @@ class PetServiceTest {
     @Test
     fun `test adoptMultiplePets throws exception for empty pet list`() {
 
-        val ownerId = 202L
         val emptyPetsId = listOf<Long>()
 
         assertThrows<IllegalArgumentException> {
@@ -128,9 +125,7 @@ class PetServiceTest {
     fun `test addMultiplePets with empty pet list`() {
 
         val emptyPetList = listOf<Pet>()
-
         petService.addMultiplePets(companyId, emptyPetList)
-
         verify(petDao).addMultiplePets(companyId, emptyPetList)
     }
 }
