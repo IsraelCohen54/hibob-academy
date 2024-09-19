@@ -122,10 +122,12 @@ class PetServiceTest {
     }
 
     @Test
-    fun `test addMultiplePets with empty pet list`() {
+    fun `addMultiplePets should throw IllegalArgumentException when pets list is empty`() {
+        val emptyPetsList = emptyList<Pet>()
 
-        val emptyPetList = listOf<Pet>()
-        petService.addMultiplePets(companyId, emptyPetList)
-        verify(petDao).addMultiplePets(companyId, emptyPetList)
+        assertEquals(
+            "Pets list cannot be empty.",
+        assertThrows<IllegalArgumentException> { petService.addMultiplePets(companyId, emptyPetsList) }.message
+        )
     }
 }

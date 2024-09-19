@@ -36,7 +36,10 @@ class PetService(private val petDao: PetDao) {
         petDao.adoptMultiplePets(companyId, ownerId, petsId)
     }
 
-    fun addMultiplePets(companyId: Long, petList: List<Pet>) {
-        petDao.addMultiplePets(companyId, petList)
+    fun addMultiplePets(companyId: Long, pets: List<Pet>) {
+        if (pets.isEmpty()) {
+            throw IllegalArgumentException("Pets list cannot be empty.")
+        }
+        petDao.addMultiplePets(companyId, pets)
     }
 }
