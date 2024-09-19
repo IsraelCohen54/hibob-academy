@@ -87,6 +87,27 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
     }
 
     @Test
+    fun `getPetById should return the correct pet`() {
+
+        petDao.insertPet(petWithoutId1)
+        val petId = petDao.getPetId(petWithoutId1)!!
+        val fetchedPet = petDao.getPetById(petId, companyId)
+
+        assertNotNull(fetchedPet, "Fetched pet should not be null")
+        assertEquals(Pet(petId, petWithoutId1), fetchedPet, "The fetched pet should match the expected pet")
+    }
+
+    @Test
+    fun `getPetById should return null for non-existent pet`() {
+
+        val nonExistentPetId = 999L
+
+        val fetchedPet = petDao.getPetById(nonExistentPetId, companyId)
+
+        assertEquals(null, fetchedPet, "Fetched pet should be null for non-existent ID")
+    }
+
+    @Test
     fun `test adopt updates ownerId`() {
         petDao.insertPet(petWithoutId1)
 
@@ -186,7 +207,7 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
 
     @Test
-    fun `addMultiplePets should add or update pets correctly - validation using the conflict implemented for date`() {
+    fun `addMultiplePets should add or update pets correctly`() {
 
         petDao.insertPet(petWithoutId1)
         petDao.insertPet(petWithoutId3)
@@ -196,24 +217,18 @@ class PetDaoTest @Autowired constructor (private val sql: DSLContext) {
 
         val pets = listOf(
             Pet(id = petId1, petWithoutId1),
-            Pet(id = petId2, petWithoutId3))
+            Pet(id = petId2, petWithoutId3)
+        )
 
         petDao.addMultiplePets(companyId = companyId, pets = pets)
 
-        val fetchedPets = sql.selectFrom(petTable)
-            .where(petTable.id.`in`(petId1, petId2))
-            .fetchInto(Pet::class.java)
+        val fetchedPet1 = petDao.getPetById(petId1, companyId)
+        val fetchedPet2 = petDao.getPetById(petId2, companyId)
 
-        val fetchedPetsById = fetchedPets.associateBy { it.id }
-
-        assertEquals(pets.size, fetchedPets.size, "The number of records should match")
-
-        pets.forEach { expectedPet ->
-            val fetchedPet = fetchedPetsById[expectedPet.id]
-            assertNotNull(fetchedPet, "Pet with ID ${expectedPet.id} should exist")
-            assertEquals(expectedPet, fetchedPet, "Pet with ID ${expectedPet.id} should match")
-        }
+        assertEquals(Pet(id = petId1, petWithoutId1), fetchedPet1, "Pet with ID $petId1 should match")
+        assertEquals(Pet(id = petId2, petWithoutId3), fetchedPet2, "Pet with ID $petId2 should match")
     }
+
 
 
     @BeforeEach
