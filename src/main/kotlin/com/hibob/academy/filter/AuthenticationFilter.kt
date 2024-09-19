@@ -33,7 +33,7 @@ class AuthenticationFilter: ContainerRequestFilter {
                 abortUnauthorized(requestContext, e)
             }
         } ?: abortUnauthorized(requestContext, Exception("No cookie"))
-        }
+    }
 
     private fun abortUnauthorized(requestContext: ContainerRequestContext, e: Exception) {
         requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
