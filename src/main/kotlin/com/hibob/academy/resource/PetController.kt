@@ -4,7 +4,9 @@ import com.hibob.academy.service.PetService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
+import org.springframework.stereotype.Controller
 
+@Controller
 @Path("/api/pets")
 @Produces("application/json")
 @Consumes("application/json")
