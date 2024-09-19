@@ -74,9 +74,9 @@ class PetController (private val petService: PetService) {
 
     @GET
     @Path("/company/{companyId}/owner/{ownerId}")
-    fun getOwnerPets(@PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
-        val ownerPets = petService.getPetsByOwnerId(ownerId, companyId)
-        return Response.ok(ownerPets).build()
+    fun getPetsByOwnerId(@PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+        val pets = petService.getPetsByOwnerId(ownerId, companyId)
+        return Response.ok(pets).build()
     }
 
     @GET
