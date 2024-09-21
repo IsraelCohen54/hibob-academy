@@ -1,17 +1,16 @@
 package com.hibob.academy.resource
 import com.hibob.academy.dao.Pet
 import com.hibob.academy.service.PetService
-import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
+import org.springframework.stereotype.Component
 
-
-@Path("/api")
+@Component
+@Path("/api/pets")
 @Produces("application/json")
 @Consumes("application/json")
-class DaoController @Inject constructor(private val petService: PetService) {
-
+class PetResource (private val petService: PetService) {
 
     // GET request to retrieve pet type by ID
     @GET
@@ -38,7 +37,7 @@ class DaoController @Inject constructor(private val petService: PetService) {
         return if (petId < 0) {
             Response.status(Status.NOT_FOUND).entity("No pet found to update").build()
         } else {
-            Response.ok("Pet ${petId} updated successfully").build()
+            Response.ok("Pet $petId updated successfully").build()
         }
     }
 
@@ -61,9 +60,13 @@ class DaoController @Inject constructor(private val petService: PetService) {
     }
 
 
-    @POST
+    @PUT
     @Path("/{companyId}/{petId}/adopt/{ownerId}")
-    fun adoptPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+    fun adoptPet(
+        @PathParam("petId") petId: Long,
+        @PathParam("ownerId") ownerId: Long,
+        @PathParam("companyId") companyId: Long
+    ): Response {
         petService.adoptPet(petId, ownerId, companyId)
         return Response.ok("Pet $petId adopted by owner $ownerId").build()
     }
@@ -72,6 +75,37 @@ class DaoController @Inject constructor(private val petService: PetService) {
     @Path("/{companyId}/{petId}/owner")
     fun getOwnerByPetId(@PathParam("petId") petId: Long, @PathParam("companyId") companyId: Long): Response {
         val owner = petService.getOwnerByPetId(petId, companyId)
-           return Response.ok(owner).build()
+        return Response.ok(owner).build()
+    }
+
+    @GET
+    @Path("/company/{companyId}/owner/{ownerId}")
+    fun getPetsByOwnerId(@PathParam("ownerId") ownerId: Long, @PathParam("companyId") companyId: Long): Response {
+        val pets = petService.getPetsByOwnerId(ownerId, companyId)
+        return Response.ok(pets).build()
+    }
+
+    @GET
+    @Path("/count-by-type/company/{companyId}")
+    fun countPetsByType(@PathParam("companyId") companyId: Long): Response {
+        return Response.ok(petService.countPetsByType(companyId)).build()
+    }
+
+    @PUT
+    @Path("/adopt-multiple-pets/{companyId}/{ownerId}")
+    fun adoptMultiplePets(
+        @PathParam("ownerId") ownerId: Long,
+        @PathParam("companyId") companyId: Long,
+        petList: List<Long>
+    ): Response {
+        petService.adoptMultiplePets(ownerId, companyId, petList)
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/add-multiple-pets/{companyId}")
+    fun addMultiplePets(@PathParam("companyId") companyId: Long, petList: List<Pet>): Response {
+        petService.addMultiplePets(companyId, petList)
+        return Response.ok().build()
     }
 }
