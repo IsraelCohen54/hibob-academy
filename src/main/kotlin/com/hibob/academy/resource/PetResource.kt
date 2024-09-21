@@ -4,9 +4,9 @@ import com.hibob.academy.service.PetService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
-import org.springframework.stereotype.Controller
+import org.springframework.stereotype.Component
 
-@Controller
+@Component
 @Path("/api/pets")
 @Produces("application/json")
 @Consumes("application/json")
@@ -60,7 +60,7 @@ class PetResource (private val petService: PetService) {
     }
 
 
-    @POST
+    @PUT
     @Path("/{companyId}/{petId}/adopt/{ownerId}")
     fun adoptPet(
         @PathParam("petId") petId: Long,
