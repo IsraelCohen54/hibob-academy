@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component
 
 @Component// sprint boot init
 @Produces(MediaType.APPLICATION_JSON)
-@Path("/createToken")
+@Path("/api/createToken")
 class TokenController(private val sessionService: SessionService) {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     fun createToken(loginRequest:LoginRequest): Response {
         val creatJwrToken = sessionService.createJwtToken(loginRequest)
-        val cookie = NewCookie.Builder(COOKIE_NAME).value(creatJwrToken).build()
+        val cookie = NewCookie.Builder(COOKIE_NAME).value(creatJwrToken).path("/api/").build()
         return Response.ok().cookie(cookie).build()
     }
 
@@ -30,7 +30,6 @@ class TokenController(private val sessionService: SessionService) {
     fun createToken1(loginRequest:LoginRequest): Response {
         return Response.ok().build()
     }
-
 }
 
 data class LoginRequest(val email: String, val isAdmin: Boolean)
