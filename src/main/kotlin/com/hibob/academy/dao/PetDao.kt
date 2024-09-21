@@ -5,7 +5,6 @@ import org.jooq.Record
 import org.jooq.RecordMapper
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 
 @Component
 class PetDao(private val sql: DSLContext) {
@@ -24,14 +23,17 @@ class PetDao(private val sql: DSLContext) {
         )
     }
 
-    fun insertPet(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate, ownerId: Long? = null) {
-        sql.insertInto(petTable)
-            .set(petTable.name, name)
-            .set(petTable.type, type.toString())
-            .set(petTable.companyId, companyId)
-            .set(petTable.dateOfArrival, dateOfArrival)
-            .set(petTable.ownerId, ownerId)
-            .execute()
+    fun insertPet(petWithoutId: PetWithoutId): Long {
+        return sql.insertInto(petTable)
+            .set(petTable.name, petWithoutId.name)
+            .set(petTable.type, petWithoutId.type.toString())
+            .set(petTable.companyId, petWithoutId.companyId)
+            .set(petTable.dateOfArrival, petWithoutId.dateOfArrival)
+            .set(petTable.ownerId, petWithoutId.ownerId)
+            .returning(petTable.id)
+            .fetchOne()
+            ?.get(petTable.id)
+            ?: throw IllegalStateException("Failed to retrieve the generated ID.")
     }
 
     fun getPetsByType(type: PetType, companyId: Long): List<Pet> {
@@ -42,17 +44,14 @@ class PetDao(private val sql: DSLContext) {
             .fetch(petTableMapper)
     }
 
-    fun getPetId(name: String, type: PetType, companyId: Long, dateOfArrival: LocalDate): Long? {
-        return sql.select(petTable.id)
+    fun getPetById(id: Long, companyId: Long): Pet? {
+        return sql.select()
             .from(petTable)
             .where(
-                petTable.name.eq(name)
+                petTable.id.eq(id)
                     .and(petTable.companyId.eq(companyId))
-                    .and(petTable.type.eq(type.toString()))
-                    .and(petTable.dateOfArrival.eq(dateOfArrival))
             )
-            .limit(1)
-            .fetchOne(petTable.id)
+            .fetchOne(petTableMapper)
     }
 
     fun adopt(petId: Long, ownerId: Long, companyId: Long) {
@@ -116,4 +115,33 @@ class PetDao(private val sql: DSLContext) {
                 { record -> record[count] })
     }
 
+    fun adoptMultiplePets(companyId: Long, ownerId: Long, petsId: List<Long>) {
+        sql.update(petTable)
+            .set(petTable.ownerId, ownerId)
+            .where(
+                petTable.companyId.eq(companyId)
+                    .and(petTable.id.`in`(petsId))
+            )
+            .execute()
+    }
+
+    fun addMultiplePets(companyId: Long, pets: List<Pet>) {
+        val insert = sql.insertInto(petTable)
+            .columns(petTable.name, petTable.type, petTable.companyId, petTable.dateOfArrival, petTable.ownerId)
+            .values(
+                DSL.param(petTable.name),
+                DSL.param(petTable.type),
+                DSL.param(petTable.companyId),
+                DSL.param(petTable.dateOfArrival),
+                DSL.param(petTable.ownerId)
+            )
+
+        val batch = sql.batch(insert)
+
+        pets.forEach { pet ->
+            batch.bind(pet.name, pet.type, pet.companyId, pet.dateOfArrival, pet.ownerId)
+        }
+
+        batch.execute()
+    }
 }

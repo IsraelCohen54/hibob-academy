@@ -12,8 +12,20 @@ data class Owner(
     val employeeId: String
 )
 
-data class Pet(
-    val id: Long,
+data class Pet(val id: Long, val name: String, val type: PetType,
+               val companyId: Long, val dateOfArrival: LocalDate, val ownerId: Long?)
+{
+    constructor(id: Long, petWithoutId: PetWithoutId) : this(
+        id,
+        petWithoutId.name,
+        petWithoutId.type,
+        petWithoutId.companyId,
+        petWithoutId.dateOfArrival,
+        petWithoutId.ownerId
+    )
+}
+
+data class PetWithoutId(
     val name: String,
     val type: PetType,
     val companyId: Long,

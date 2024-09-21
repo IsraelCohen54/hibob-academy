@@ -9,7 +9,7 @@ import jakarta.ws.rs.ext.Provider
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-const val CREATE_TOKEN_PATH = "createToken"
+const val CREATE_TOKEN_PATH = "api/createToken"
 const val COOKIE_NAME = "JWT"
 
 @Component

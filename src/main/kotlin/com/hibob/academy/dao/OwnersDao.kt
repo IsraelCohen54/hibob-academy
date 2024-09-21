@@ -1,10 +1,10 @@
 package com.hibob.academy.dao
 
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
-import jakarta.inject.Inject
 
 @Component
 class OwnerDao @Inject constructor(private val sql: DSLContext) {
@@ -20,14 +20,17 @@ class OwnerDao @Inject constructor(private val sql: DSLContext) {
         )
     }
 
-    fun insertOwner(name: String, companyId: Long, employeeId: String) {
-        sql.insertInto(ownerTable)
+    fun insertOwner(name: String, companyId: Long, employeeId: String): Long {
+        return sql.insertInto(ownerTable)
             .set(ownerTable.name, name)
             .set(ownerTable.companyId, companyId)
             .set(ownerTable.employeeId, employeeId)
             .onConflict(ownerTable.companyId, ownerTable.employeeId)
             .doNothing()
-            .execute()
+            .returning(ownerTable.id)
+            .fetchOne()
+            ?.get(ownerTable.id)
+            ?: throw IllegalStateException("Failed to retrieve the generated ID.")
     }
 
     fun getOwners(companyId: Long): List<Owner?> =
