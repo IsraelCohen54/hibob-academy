@@ -7,10 +7,10 @@ CREATE TABLE company
 
 CREATE TABLE employee (
     id BIGSERIAL PRIMARY KEY,
+    company_id BIGINT,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    role VARCHAR(50) CHECK (role IN ('admin', 'manager', 'employee')) NOT NULL,
-    company_id BIGINT REFERENCES company(id),
+    role VARCHAR(50) NOT NULL,
     employee_id INT NOT NULL unique,
     department VARCHAR(30) NOT NULL
 );
