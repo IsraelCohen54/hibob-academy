@@ -8,7 +8,7 @@ CREATE TABLE feedback (
     employee_id INT
 );
 
-CREATE unique INDEX idx_feedback_on_company_id_feedback_employee_id ON feedback (company_id, feedback, employee_id);
+CREATE unique INDEX idx_feedback_on_company_id_comment_employee_id ON feedback (company_id, comment, employee_id);
 
 CREATE TABLE identified_feedback_response
 (
