@@ -1,4 +1,4 @@
-package com.hibob
+package com.hibob.kotlin_exercises
 
 data class User(val id: Long, val name: String, val email: String, val password: String, val isEmailVerified: Boolean = false)
 

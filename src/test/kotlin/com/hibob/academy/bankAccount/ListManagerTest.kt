@@ -1,8 +1,11 @@
-package com.hibob.bankAccount
+package com.hibob.academy.bankAccount
 
+import com.hibob.bankAccount.ListManager
+import com.hibob.bankAccount.PeopleStatistics
+import com.hibob.bankAccount.Person
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class ListManagerTest {
 
