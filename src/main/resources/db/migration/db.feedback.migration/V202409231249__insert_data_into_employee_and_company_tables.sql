@@ -33,7 +33,7 @@ INSERT INTO employee (first_name, last_name, role, company_id, employee_id, depa
 ('Kenny', 'Bania', 'employee', 2, 209, 'PRODUCT'),
 ('Jackie', 'Chiles', 'employee', 2, 210, 'CX'),
 ('Sue', 'Ellen', 'employee', 2, 211, 'PRODUCT'),
-('Morty', 'Seinfeld', 'employee', 2, 212, 'Retail'),
+('Morty', 'Seinfeld', 'employee', 2, 212, 'PRODUCT'),
 ('Helen', 'Seinfeld', 'employee', 2, 213, 'PRODUCT'),
 ('Uncle', 'Leo', 'employee', 2, 214, 'CX'),
 ('Babu', 'Bhatt', 'employee', 2, 215, 'PRODUCT');
