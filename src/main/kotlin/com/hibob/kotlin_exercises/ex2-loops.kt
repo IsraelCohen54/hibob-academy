@@ -1,4 +1,4 @@
-package com.hibob
+package com.hibob.kotlin_exercises
 
 fun isContainsSpecialCharacterExcludingUnderscore(s: String): Boolean {
     val regex = "[^a-zA-Z0-9_]".toRegex()

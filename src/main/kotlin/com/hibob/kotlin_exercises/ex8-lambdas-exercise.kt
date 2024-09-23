@@ -1,4 +1,4 @@
-package com.hibob
+package com.hibob.kotlin_exercises
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper

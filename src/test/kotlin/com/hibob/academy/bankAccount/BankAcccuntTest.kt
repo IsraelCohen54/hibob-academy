@@ -1,9 +1,9 @@
-package com.hibob.bankAccount
+package com.hibob.academy.bankAccount
+
+
 import com.hibob.bootcamp.BankAccount
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 
 /**
