@@ -1,4 +1,4 @@
-package com.hibob
+package com.hibob.kotlin_exercises
 
 fun main2() {
     ex5()

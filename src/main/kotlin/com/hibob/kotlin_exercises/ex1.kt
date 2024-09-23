@@ -1,4 +1,4 @@
-package com.hibob
+package com.hibob.kotlin_exercises
 
 fun printEvenOrOdd (num: Int) {
     if (num % 2 == 0) {
