@@ -32,13 +32,13 @@ data class FeedbackCreationRequest(
     val comment: String,
     )
 
-data class InsertResponse(
+data class ResponseCreationRequest(
     val feedbackId: Long,
     val response: String,
     val responderId: Long
 )
 
-data class RetrieveResponse(
+data class RetrieveResponseRequest(
     val id: Long,
     val feedbackId: Long,
     val response: String,
