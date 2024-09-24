@@ -1,2 +1,2 @@
-ALTER TABLE feedback
-ALTER COLUMN employee_id TYPE BIGINT;
+ALTER TABLE identified_feedback_response
+    ADD COLUMN responder_id BIGINT;
