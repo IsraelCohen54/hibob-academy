@@ -11,10 +11,9 @@ class EmployeeDao(private val sql: DSLContext) {
 
     private val employeeTable = EmployeeTable.instance
 
-    private val employeeTableMapper = RecordMapper<Record, Employee> { record ->
-        Employee(
+    private val employeeTableMapper = RecordMapper<Record, RetrievedEmployee> { record ->
+        RetrievedEmployee(
             id = record[employeeTable.id],
-            companyId = record[employeeTable.companyId],
             firstName = record[employeeTable.firstName],
             lastName = record[employeeTable.lastName],
             role = RoleType.fromString(record[(employeeTable.role)]),
@@ -22,19 +21,20 @@ class EmployeeDao(private val sql: DSLContext) {
         )
     }
 
-    fun getEmployee(companyId: Long, employeeId: Long): Employee? {
+    fun getEmployee(userDetails: LoggedInUser): RetrievedEmployee? {
         return sql.selectFrom(employeeTable)
-            .where(employeeTable.id.eq(employeeId))
+            .where(employeeTable.id.eq(userDetails.employeeId)
+                .and(employeeTable.companyId.eq(userDetails.companyId)))
             .fetchOne(employeeTableMapper)
     }
 
-    fun insertEmployee(employee: Employee): Long {
+    fun insertEmployee(userDetails: LoggedInUser, employee: InsertEmployee): Long {
         return sql.insertInto(employeeTable)
             .set(employeeTable.firstName, employee.firstName)
             .set(employeeTable.lastName, employee.lastName)
             .set(employeeTable.role, employee.role.toString())
             .set(employeeTable.department, employee.department.toString())
-            .set(employeeTable.companyId, employee.companyId)
+            .set(employeeTable.companyId, userDetails.companyId)
             .returning(employeeTable.id)
             .fetchOne()
             ?.get(employeeTable.id)

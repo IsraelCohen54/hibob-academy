@@ -3,47 +3,42 @@ package com.feedback.dao
 import com.hibob.nullability_exercises.nullSafeToUpper
 import java.sql.Timestamp
 
-data class Employee(
-    val id: Long? = null,
-    val companyId: Long,
+data class RetrievedEmployee(
+    val id: Long,
     val firstName: String,
     val lastName: String,
     val role: RoleType,
     val department: DepartmentType
 )
 
+data class InsertEmployee(
+    val firstName: String,
+    val lastName: String,
+    val role: RoleType,
+    val department: DepartmentType
+)
 
-sealed class Feedback {
-    abstract val companyId: Long
-    abstract val comment: String
-    abstract val department: DepartmentType?
-    abstract val employeeId: Long?
+data class RetrievedFeedback(
+    val id: Long,
+    val department: DepartmentType?,
+    val comment: String,
+    val creationTimestamp: Timestamp,
+    val status: StatusType,
+    val employeeId: Long?
+)
 
-    data class RetrieveFeedback(
-        val id: Long,
-        override val companyId: Long,
-        override val department: DepartmentType?,
-        override val comment: String,
-        val creationTimestamp: Timestamp,
-        val status: StatusType,
-        override val employeeId: Long?
-    ) : Feedback()
-
-    data class InsertFeedback(
-        override val companyId: Long,
-        override val department: DepartmentType?,
-        override val comment: String,
-        override val employeeId: Long?
-    ) : Feedback()
-}
-
+data class InsertFeedback(
+    val department: DepartmentType?,
+    val comment: String,
+    )
 
 data class Response(
     val id: Long? = null,
-    val companyId: Long,
     val feedbackId: Long,
     val response: String
 )
+
+data class LoggedInUser(val companyId: Long, val employeeId: Long?)
 
 enum class RoleType {
     ADMIN,
