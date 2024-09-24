@@ -21,7 +21,7 @@ class FeedbackTable(tableName: String = "feedback") : JooqTable(tableName) {
     val companyId = createBigIntField("company_id")
     val department = createVarcharField("department")
     val comment = createVarcharField("comment")
-    val creationTimestamp = createTimestampField("creation_timestamp") //todo
+    val creationTimestamp = createTimestampField("creation_timestamp")
     val status = createVarcharField("status")
     val employeeId = createBigIntField("employee_id")
 

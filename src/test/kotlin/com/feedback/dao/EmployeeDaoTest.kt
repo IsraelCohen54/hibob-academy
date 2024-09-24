@@ -18,22 +18,24 @@ class EmployeeDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val employeeDao = EmployeeDao(sql)
 
     // Test fields
-    private val dummyEmployee = Employee(companyId = companyId, firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val userDetails: LoggedInUser = LoggedInUser(companyId, Random.nextLong())
+    private val dummyInsertEmployee = InsertEmployee(firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val dummyRetrievedEmployee = RetrievedEmployee(id = 0,firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
 
     @Test
     fun `test getEmployee return correct employee`() {
-        val id = employeeDao.insertEmployee(dummyEmployee)
-        val employee = employeeDao.getEmployee(companyId = companyId, employeeId = id)
-        assertEquals(employee, dummyEmployee.copy(id = id))
+        val id = employeeDao.insertEmployee(userDetails, dummyInsertEmployee)
+        val employee = employeeDao.getEmployee(userDetails.copy(employeeId=id))
+        assertEquals(employee, dummyRetrievedEmployee.copy(id = id))
     }
 
     @Test
     fun `test insertEmployee with same values return changed id`() {
-        val id1 = employeeDao.insertEmployee(dummyEmployee)
-        val id2 = employeeDao.insertEmployee(dummyEmployee)
+        val id1 = employeeDao.insertEmployee(userDetails, dummyInsertEmployee)
+        val id2 = employeeDao.insertEmployee(userDetails, dummyInsertEmployee)
         assertNotEquals(
-            employeeDao.getEmployee(companyId, employeeId = id1),
-            employeeDao.getEmployee(companyId, employeeId = id2)
+            employeeDao.getEmployee(userDetails.copy(employeeId=id1)),
+            employeeDao.getEmployee(userDetails.copy(employeeId=id2))
         )
     }
 
