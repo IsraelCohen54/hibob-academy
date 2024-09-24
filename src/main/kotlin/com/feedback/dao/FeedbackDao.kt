@@ -59,7 +59,7 @@ class FeedbackDao(private val sql: DSLContext) {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.employeeId.eq(userDetails.employeeId))
             .and(feedbackTable.companyId.eq(userDetails.companyId))
-            .fetch(retrieveFeedbackTableMapper) // Fetch full objects via mapper then choose wanted columns
+            .fetch(retrieveFeedbackTableMapper)
             .associate { feedback -> feedback.id to feedback.status.toString() }
     }
 
