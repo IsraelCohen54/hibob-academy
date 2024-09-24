@@ -9,8 +9,8 @@ class FeedbackDao(private val sql: DSLContext) {
 
     private val feedbackTable = FeedbackTable.instance
 
-    private val retrieveFeedbackTableMapper = RecordMapper<Record, RetrievedFeedback> { record ->
-        RetrievedFeedback(
+    private val retrieveFeedbackTableMapper = RecordMapper<Record, RetrieveFeedbackRequest> { record ->
+        RetrieveFeedbackRequest(
             id = record[feedbackTable.id],
             department = record[feedbackTable.department]?.let { DepartmentType.fromString(it) },
             comment = record[feedbackTable.comment],
@@ -20,7 +20,7 @@ class FeedbackDao(private val sql: DSLContext) {
         )
     }
 
-    fun insertFeedback(userDetails: LoggedInUser, feedback: InsertFeedback): Long {
+    fun insertFeedback(userDetails: LoggedInUser, feedback: FeedbackCreationRequest): Long {
         return sql.insertInto(feedbackTable)
             .set(feedbackTable.companyId, userDetails.companyId)
             .set(feedbackTable.department, feedback.department?.toString())
@@ -32,7 +32,7 @@ class FeedbackDao(private val sql: DSLContext) {
             ?: throw IllegalStateException("Failed to retrieve the generated feedback ID.")
     }
 
-    fun getFeedbackById(feedbackId: Long, userDetails: LoggedInUser): RetrievedFeedback? {
+    fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): RetrieveFeedbackRequest? {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.id.eq(feedbackId)
                 .and(feedbackTable.companyId.eq(userDetails.companyId)))
@@ -40,7 +40,7 @@ class FeedbackDao(private val sql: DSLContext) {
     }
 
 
-    fun filterFeedback(filters: List<FeedbackFilter>, userDetails: LoggedInUser): Map<Long, String>? {
+    fun filterFeedback(userDetails: LoggedInUser, filters: List<FeedbackFilter>): Map<Long, String>? {
         var query: SelectConditionStep<Record2<Long, String>> = sql.select(feedbackTable.id, feedbackTable.comment)
             .from(feedbackTable)
             .where(feedbackTable.companyId.eq(userDetails.companyId))
@@ -55,7 +55,7 @@ class FeedbackDao(private val sql: DSLContext) {
     }
 
 
-    fun getFeedbackStatusByEmployeeAndCompany(userDetails: LoggedInUser): Map<Long, String> {
+    fun getUserFeedbacks(userDetails: LoggedInUser): Map<Long, String> {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.employeeId.eq(userDetails.employeeId))
             .and(feedbackTable.companyId.eq(userDetails.companyId))
@@ -63,7 +63,7 @@ class FeedbackDao(private val sql: DSLContext) {
             .associate { feedback -> feedback.id to feedback.status.toString() }
     }
 
-    fun updateFeedbackStatus(feedbackId: Long, userDetails: LoggedInUser, newStatus: StatusType) {
+    fun updateFeedbackStatus(userDetails: LoggedInUser, feedbackId: Long, newStatus: StatusType) {
         sql.update(feedbackTable)
             .set(feedbackTable.status, newStatus.toString())
             .where(feedbackTable.id.eq(feedbackId))

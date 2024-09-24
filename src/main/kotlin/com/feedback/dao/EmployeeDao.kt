@@ -11,8 +11,8 @@ class EmployeeDao(private val sql: DSLContext) {
 
     private val employeeTable = EmployeeTable.instance
 
-    private val employeeTableMapper = RecordMapper<Record, RetrievedEmployee> { record ->
-        RetrievedEmployee(
+    private val employeeTableMapper = RecordMapper<Record, RetrieveEmployeeRequest> { record ->
+        RetrieveEmployeeRequest(
             id = record[employeeTable.id],
             firstName = record[employeeTable.firstName],
             lastName = record[employeeTable.lastName],
@@ -21,14 +21,14 @@ class EmployeeDao(private val sql: DSLContext) {
         )
     }
 
-    fun getEmployee(userDetails: LoggedInUser): RetrievedEmployee? {
+    fun getEmployee(userDetails: LoggedInUser): RetrieveEmployeeRequest? {
         return sql.selectFrom(employeeTable)
             .where(employeeTable.id.eq(userDetails.employeeId)
                 .and(employeeTable.companyId.eq(userDetails.companyId)))
             .fetchOne(employeeTableMapper)
     }
 
-    fun insertEmployee(userDetails: LoggedInUser, employee: InsertEmployee): Long {
+    fun insertEmployee(userDetails: LoggedInUser, employee: EmployeeCreationRequest): Long {
         return sql.insertInto(employeeTable)
             .set(employeeTable.firstName, employee.firstName)
             .set(employeeTable.lastName, employee.lastName)

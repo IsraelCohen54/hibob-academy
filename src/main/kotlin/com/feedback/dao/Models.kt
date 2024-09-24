@@ -3,7 +3,7 @@ package com.feedback.dao
 import com.hibob.nullability_exercises.nullSafeToUpper
 import java.sql.Timestamp
 
-data class RetrievedEmployee(
+data class RetrieveEmployeeRequest(
     val id: Long,
     val firstName: String,
     val lastName: String,
@@ -11,14 +11,14 @@ data class RetrievedEmployee(
     val department: DepartmentType
 )
 
-data class InsertEmployee(
+data class EmployeeCreationRequest(
     val firstName: String,
     val lastName: String,
     val role: RoleType,
     val department: DepartmentType
 )
 
-data class RetrievedFeedback(
+data class RetrieveFeedbackRequest(
     val id: Long,
     val department: DepartmentType?,
     val comment: String,
@@ -27,7 +27,7 @@ data class RetrievedFeedback(
     val employeeId: Long?
 )
 
-data class InsertFeedback(
+data class FeedbackCreationRequest(
     val department: DepartmentType?,
     val comment: String,
     )

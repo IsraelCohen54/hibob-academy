@@ -24,13 +24,13 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     // Test fields
     private val dummyEmployeeId = Random.nextLong()
     private val notExistFeedbackId = 999L
-    private val dummyAnonymousFeedback = InsertFeedback(
+    private val dummyAnonymousFeedback = FeedbackCreationRequest(
         department = null,
         comment = "This is a test anonymous comment",
     )
     private val userDetails: LoggedInUser = LoggedInUser(companyId, dummyEmployeeId)
 
-    private val dummyPublicFeedback = InsertFeedback(
+    private val dummyPublicFeedback = FeedbackCreationRequest(
         department = DepartmentType.PRODUCT,
         comment = "This is a test public comment",
     )
@@ -39,24 +39,24 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test getFeedbackById returns correct feedback`() {
 
         val feedbackId = feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback)
-        val feedback = feedbackDao.getFeedbackById(feedbackId, userDetails)
+        val feedback = feedbackDao.getFeedbackById(userDetails, feedbackId)
         assertEquals(feedbackId, feedback?.id)
         assertEquals(dummyAnonymousFeedback.comment, feedback?.comment)
     }
 
     @Test
     fun `test getFeedbackById returns null when feedback not found`() {
-        val feedback = feedbackDao.getFeedbackById(notExistFeedbackId, userDetails)
+        val feedback = feedbackDao.getFeedbackById(userDetails, notExistFeedbackId)
         assertNull(feedback)
     }
 
     @Test
-    fun `test getFeedbackStatusByEmployeeAndCompanyId returns correct map`() {
+    fun `test getUserFeedbacksId returns correct map`() {
         val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback)
         val id2 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback.copy(comment = "some other comment"))
         feedbackDao.insertFeedback(userDetails.copy(employeeId = dummyEmployeeId - 1), dummyAnonymousFeedback)
 
-        val result = feedbackDao.getFeedbackStatusByEmployeeAndCompany(userDetails)
+        val result = feedbackDao.getUserFeedbacks(userDetails)
 
         val shouldEqualTo :Map<Long, String> = mapOf(
             id1 to "NOT_SOLVED",
@@ -71,9 +71,9 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val feedbackId = feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback)
 
         val updatedStatus = StatusType.SOLVED
-        feedbackDao.updateFeedbackStatus(feedbackId, userDetails, updatedStatus)
+        feedbackDao.updateFeedbackStatus(userDetails, feedbackId, updatedStatus)
 
-        val updatedFeedback = feedbackDao.getFeedbackById(feedbackId, userDetails)
+        val updatedFeedback = feedbackDao.getFeedbackById(userDetails, feedbackId)
         assertEquals(updatedStatus, updatedFeedback?.status)
     }
 
@@ -85,7 +85,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback)
         val id2 = feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback)
 
-        val result = feedbackDao.filterFeedback(emptyList(), userDetails)
+        val result = feedbackDao.filterFeedback(userDetails, emptyList())
 
         val expected = mapOf(
             id1 to dummyPublicFeedback.comment,
@@ -101,7 +101,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val id2 = feedbackDao.insertFeedback(userDetails.copy(employeeId=null), dummyAnonymousFeedback)
 
         val filters = listOf(AnonymousFilter(true))
-        val result = feedbackDao.filterFeedback(filters, userDetails)
+        val result = feedbackDao.filterFeedback(userDetails, filters)
 
         val expected = mapOf(id2 to dummyAnonymousFeedback.comment)
 
@@ -114,7 +114,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         feedbackDao.insertFeedback(userDetails.copy(employeeId=null), dummyAnonymousFeedback)
 
         val filters = listOf(AnonymousFilter(false))
-        val result = feedbackDao.filterFeedback(filters, userDetails)
+        val result = feedbackDao.filterFeedback(userDetails, filters)
 
         val expected = mapOf(id1 to dummyPublicFeedback.comment)
 
@@ -129,7 +129,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback) // Department is PRODUCT
         feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback.copy(department = DepartmentType.IT))
 
-        val result = feedbackDao.filterFeedback(filters, userDetails)
+        val result = feedbackDao.filterFeedback(userDetails, filters)
 
         val expected = mapOf(id1 to dummyPublicFeedback.comment)
 
@@ -143,7 +143,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         feedbackDao.insertFeedback(userDetails, dummyPublicFeedback.copy(department = DepartmentType.IT, comment = "not anonymous but not PRODUCT department"))
 
         val filters = listOf(AnonymousFilter(false), DepartmentFilter(DepartmentType.PRODUCT.toString()))
-        val result = feedbackDao.filterFeedback(filters, userDetails)
+        val result = feedbackDao.filterFeedback(userDetails, filters)
 
         val expected = mapOf(id1 to dummyPublicFeedback.comment) // Only non-anonymous feedback from PRODUCT department
 
@@ -158,7 +158,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val currentTime = Timestamp(System.currentTimeMillis())
 
         val filtersFromCurrentTime = listOf(FromDateFilter(currentTime))
-        val resultFromCurrentTime = feedbackDao.filterFeedback(filtersFromCurrentTime, userDetails)
+        val resultFromCurrentTime = feedbackDao.filterFeedback(userDetails, filtersFromCurrentTime)
 
         // Assert no feedback is returned filtering from current time
         assertEquals(emptyMap<Long, String>(), resultFromCurrentTime)
@@ -166,7 +166,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         // validate filter from 1 minute earlier get the inserted feedback:
         val oneMinuteAgo = Timestamp(currentTime.time - 60 * 1000)
         val filtersFromOneMinuteAgo = listOf(FromDateFilter(oneMinuteAgo))
-        val resultFromOneMinuteAgo = feedbackDao.filterFeedback(filtersFromOneMinuteAgo, userDetails)
+        val resultFromOneMinuteAgo = feedbackDao.filterFeedback(userDetails, filtersFromOneMinuteAgo)
 
         val expected = mapOf(feedbackId to dummyPublicFeedback.comment)
         assertEquals(expected, resultFromOneMinuteAgo)

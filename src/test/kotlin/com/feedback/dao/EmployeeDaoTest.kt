@@ -19,8 +19,8 @@ class EmployeeDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     // Test fields
     private val userDetails: LoggedInUser = LoggedInUser(companyId, Random.nextLong())
-    private val dummyInsertEmployee = InsertEmployee(firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
-    private val dummyRetrievedEmployee = RetrievedEmployee(id = 0,firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val dummyInsertEmployee = EmployeeCreationRequest(firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val dummyRetrievedEmployee = RetrieveEmployeeRequest(id = 0,firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
 
     @Test
     fun `test getEmployee return correct employee`() {
