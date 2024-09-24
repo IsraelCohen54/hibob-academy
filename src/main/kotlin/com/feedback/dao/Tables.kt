@@ -35,6 +35,7 @@ class ResponseTable(tableName: String = "identified_feedback_response") : JooqTa
     val companyId = createBigIntField("company_id")
     val feedbackId = createBigIntField("feedback_id")
     val response = createVarcharField("response")
+    val responderId = createBigIntField("responder_id")
 
     companion object {
         val instance = ResponseTable("identified_feedback_response")
