@@ -32,10 +32,17 @@ data class InsertFeedback(
     val comment: String,
     )
 
-data class Response(
-    val id: Long? = null,
+data class InsertResponse(
     val feedbackId: Long,
-    val response: String
+    val response: String,
+    val responderId: Long
+)
+
+data class RetrieveResponse(
+    val id: Long,
+    val feedbackId: Long,
+    val response: String,
+    val responderId: Long
 )
 
 data class LoggedInUser(val companyId: Long, val employeeId: Long?)
