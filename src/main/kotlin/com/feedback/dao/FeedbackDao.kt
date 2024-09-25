@@ -15,7 +15,7 @@ class FeedbackDao(private val sql: DSLContext) {
             department = record[feedbackTable.department]?.let { DepartmentType.fromString(it) },
             comment = record[feedbackTable.comment],
             creationTimestamp = record[feedbackTable.creationTimestamp],
-            status = record[feedbackTable.status]?.let  { StatusType.fromString(it) } ?: StatusType.NOT_SOLVED, //todo ask why can be nullable
+            status = record[feedbackTable.status]?.let { StatusType.fromString(it) } ?: StatusType.NOT_SOLVED,
             employeeId = record[feedbackTable.employeeId]
         )
     }
@@ -34,8 +34,10 @@ class FeedbackDao(private val sql: DSLContext) {
 
     fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): RetrieveFeedbackRequest? {
         return sql.selectFrom(feedbackTable)
-            .where(feedbackTable.id.eq(feedbackId)
-                .and(feedbackTable.companyId.eq(userDetails.companyId)))
+            .where(
+                feedbackTable.id.eq(feedbackId)
+                    .and(feedbackTable.companyId.eq(userDetails.companyId))
+            )
             .fetchOne(retrieveFeedbackTableMapper)
     }
 
@@ -55,12 +57,11 @@ class FeedbackDao(private val sql: DSLContext) {
     }
 
 
-    fun getUserFeedbacks(userDetails: LoggedInUser): Map<Long, String> {
+    fun getUserFeedbacks(userDetails: LoggedInUser): List<RetrieveFeedbackRequest>? {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.employeeId.eq(userDetails.employeeId))
             .and(feedbackTable.companyId.eq(userDetails.companyId))
             .fetch(retrieveFeedbackTableMapper)
-            .associate { feedback -> feedback.id to feedback.status.toString() }
     }
 
     fun updateFeedbackStatus(userDetails: LoggedInUser, feedbackId: Long, newStatus: StatusType) {
