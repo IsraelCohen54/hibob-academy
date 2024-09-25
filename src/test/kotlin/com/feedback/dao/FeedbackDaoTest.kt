@@ -120,7 +120,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test filterFeedback applies department filter`() {
-        val filters = listOf(DepartmentFilter(DepartmentType.PRODUCT.toString()))
+        val filters = listOf(DepartmentFilter(DepartmentType.PRODUCT))
 
         val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback)
         feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback.copy(department = DepartmentType.IT))
@@ -138,7 +138,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         feedbackDao.insertFeedback(userDetails.copy(employeeId=null), dummyAnonymousFeedback.copy(department = DepartmentType.PRODUCT))
         feedbackDao.insertFeedback(userDetails, dummyPublicFeedback.copy(department = DepartmentType.IT, comment = "not anonymous but not PRODUCT department"))
 
-        val filters = listOf(AnonymousFilter(false), DepartmentFilter(DepartmentType.PRODUCT.toString()))
+        val filters = listOf(AnonymousFilter(false), DepartmentFilter(DepartmentType.PRODUCT))
         val result = feedbackDao.filterFeedback(userDetails, filters)
 
         val expected = mapOf(id1 to dummyPublicFeedback.comment)
