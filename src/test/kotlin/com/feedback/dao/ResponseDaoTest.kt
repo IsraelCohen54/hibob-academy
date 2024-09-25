@@ -17,7 +17,7 @@ class ResponseDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val companyId = Random.nextLong()
     private val responseDao = ResponseDao(sql)
 
-    // Test fields
+
     private val dummyKnownUserDetails: LoggedInUser = LoggedInUser(companyId, Random.nextLong())
     private val dummyFeedbackId: Long = Random.nextLong()
     private val dummyResponse: String = "funny migration name: V2024092423:01__, a bit late apparently"
@@ -35,7 +35,6 @@ class ResponseDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val result = responseDao.getResponseByFeedbackId(dummyKnownUserDetails, dummyFeedbackId)
 
-        // Assertions
         assertNotNull(result, "Response should not be null after insertion")
         assertEquals(responseId, result?.id, "Inserted response ID should match")
         assertEquals(dummyResponseCreation.response, result?.response, "Inserted response content should match")
