@@ -3,9 +3,16 @@ package com.feedback.resource
 import com.feedback.dao.DepartmentType
 import com.feedback.dao.StatusType
 import com.feedback.service.FeedbackFetcher
+import com.feedback.dao.FeedbackCreationRequest
+import com.feedback.dao.LoggedInUser
+import com.feedback.service.EmployeeFetcher
 import com.feedback.service.FeedbackInserter
 import com.feedback.service.FeedbackUpdater
 import jakarta.ws.rs.*
+import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Cookie
 import jakarta.ws.rs.core.Response
@@ -14,9 +21,9 @@ import org.springframework.stereotype.Component
 import java.sql.Timestamp
 
 @Component
+@Path("/api/feedback")
 @Produces("application/json")
 @Consumes("application/json")
-@Path("/api/feedback")
 class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor,
     private val requestValidator: RequestValidator,
@@ -24,14 +31,27 @@ class FeedbackResource(
     private val feedbackInserter: FeedbackInserter,
     private val feedbackFetcher: FeedbackFetcher,
     private val feedbackUpdater: FeedbackUpdater,
+    private val employeeFetcher: EmployeeFetcher,
+    private val loginDetailsValidator: LoginDetailsValidator,
+    private val extractCookiesData: ExtractCookiesData
+) {
 
-    ) {
     @POST
     fun submitFeedback(feedbackRequest: FeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
+    fun submitFeedback(
+        feedbackRequest: FeedbackRequest,
+        @Context cookies: Map<String, Cookie>
+    ): Response {
+        val loggedInUser = extractCookiesData.extractCompanyIdEmployeeId(cookies)
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         requestValidator.validateLoginValue(loggedInUser)
         requestValidator.validateCommentValue(feedbackRequest.comment)
+        val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
+        val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
+
+        loginDetailsValidator.validateCompanyId(loggedInUser.companyId)
+        loginDetailsValidator.validateEmployeeId(loggedInUser.employeeId)
 
         val feedbackCreationRequest = requestPreparetor.prepareRequestWithAnonymity(
             loggedInUser,
@@ -71,6 +91,8 @@ class FeedbackResource(
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         requestValidator.validateLoginValue(loggedInUser)
         requestValidator.validateStatusUpdater(statusUpdateRequest)
+    private fun fetchEmployeeDepartmentByAnonymity(loggedInUser: LoggedInUser, isAnonymous: Boolean) =
+        if (isAnonymous) null else employeeFetcher.getEmployeeDetails(loggedInUser).department
 
         feedbackUpdater.updateFeedbackStatus(
             loggedInUser, statusUpdateRequest.feedbackId, StatusType.fromString(statusUpdateRequest.status)
