@@ -3,7 +3,7 @@ package com.feedback.dao
 import com.hibob.nullability_exercises.nullSafeToUpper
 import java.sql.Timestamp
 
-data class RetrieveEmployeeRequest(
+data class PersistedEmployee(
     val id: Long,
     val firstName: String,
     val lastName: String,
@@ -53,7 +53,6 @@ enum class RoleType {
     EMPLOYEE;
 
     companion object {
-        // convert a String to a Role
         fun fromString(value: String): RoleType {
             return RoleType.valueOf(value.nullSafeToUpper())
         }
@@ -66,7 +65,6 @@ enum class DepartmentType {
     CX;
 
     companion object {
-        // convert a String to a Department
         fun fromString(value: String): DepartmentType {
             return DepartmentType.valueOf(value.nullSafeToUpper())
         }
@@ -79,7 +77,6 @@ enum class StatusType {
     SOLVED;
 
     companion object {
-        // convert a String to a Status
         fun fromString(value: String): StatusType {
             return StatusType.valueOf(value.nullSafeToUpper())
         }

@@ -17,22 +17,21 @@ class EmployeeDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val companyId = Random.nextLong()
     private val employeeDao = EmployeeDao(sql)
 
-    // Test fields
     private val dummyUserDetails: LoggedInUser = LoggedInUser(companyId, Random.nextLong())
-    private val dummyInsertEmployee = EmployeeCreationRequest(firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
-    private val dummyRetrievedEmployee = RetrieveEmployeeRequest(id = 0,firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val dummyEmployeeCreationRequest = EmployeeCreationRequest(firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
+    private val dummyPersistedEmployee = PersistedEmployee(id = 0,firstName = "a", lastName = "b", role = RoleType.ADMIN, department = DepartmentType.PRODUCT)
 
     @Test
     fun `test getEmployee return correct employee`() {
-        val id = employeeDao.insertEmployee(dummyUserDetails, dummyInsertEmployee)
+        val id = employeeDao.insertEmployee(dummyUserDetails, dummyEmployeeCreationRequest)
         val employee = employeeDao.getEmployee(dummyUserDetails.copy(employeeId=id))
-        assertEquals(employee, dummyRetrievedEmployee.copy(id = id))
+        assertEquals(employee, dummyPersistedEmployee.copy(id = id))
     }
 
     @Test
     fun `test insertEmployee with same values return changed id`() {
-        val id1 = employeeDao.insertEmployee(dummyUserDetails, dummyInsertEmployee)
-        val id2 = employeeDao.insertEmployee(dummyUserDetails, dummyInsertEmployee)
+        val id1 = employeeDao.insertEmployee(dummyUserDetails, dummyEmployeeCreationRequest)
+        val id2 = employeeDao.insertEmployee(dummyUserDetails, dummyEmployeeCreationRequest)
         assertNotEquals(
             employeeDao.getEmployee(dummyUserDetails.copy(employeeId=id1)),
             employeeDao.getEmployee(dummyUserDetails.copy(employeeId=id2))

@@ -21,7 +21,6 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val companyId = Random.nextLong()
     private val feedbackDao = FeedbackDao(sql)
 
-    // Test fields
     private val dummyEmployeeId = Random.nextLong()
     private val notExistFeedbackId = 999L
     private val dummyAnonymousFeedback = FeedbackCreationRequest(
@@ -123,10 +122,9 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test filterFeedback applies department filter`() {
-        // Applying DepartmentFilter with "PRODUCT"
         val filters = listOf(DepartmentFilter(DepartmentType.PRODUCT.toString()))
 
-        val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback) // Department is PRODUCT
+        val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback)
         feedbackDao.insertFeedback(userDetails, dummyAnonymousFeedback.copy(department = DepartmentType.IT))
 
         val result = feedbackDao.filterFeedback(userDetails, filters)
@@ -145,7 +143,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val filters = listOf(AnonymousFilter(false), DepartmentFilter(DepartmentType.PRODUCT.toString()))
         val result = feedbackDao.filterFeedback(userDetails, filters)
 
-        val expected = mapOf(id1 to dummyPublicFeedback.comment) // Only non-anonymous feedback from PRODUCT department
+        val expected = mapOf(id1 to dummyPublicFeedback.comment)
 
         assertEquals(expected, result)
     }
@@ -160,10 +158,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val filtersFromCurrentTime = listOf(FromDateFilter(currentTime))
         val resultFromCurrentTime = feedbackDao.filterFeedback(userDetails, filtersFromCurrentTime)
 
-        // Assert no feedback is returned filtering from current time
         assertEquals(emptyMap<Long, String>(), resultFromCurrentTime)
 
-        // validate filter from 1 minute earlier get the inserted feedback:
         val oneMinuteAgo = Timestamp(currentTime.time - 60 * 1000)
         val filtersFromOneMinuteAgo = listOf(FromDateFilter(oneMinuteAgo))
         val resultFromOneMinuteAgo = feedbackDao.filterFeedback(userDetails, filtersFromOneMinuteAgo)
@@ -177,7 +173,6 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     @BeforeEach
     @AfterEach
     fun cleanup() {
-        // Clean up any feedback related to this company ID
         sql.deleteFrom(feedbackTable)
             .where(feedbackTable.companyId.eq(companyId))
             .execute()
