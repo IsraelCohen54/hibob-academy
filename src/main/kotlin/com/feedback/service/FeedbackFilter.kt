@@ -1,5 +1,6 @@
 package com.feedback.service
 
+import com.feedback.dao.DepartmentType
 import com.feedback.dao.FeedbackTable
 import org.jooq.Record2
 import org.jooq.SelectConditionStep
@@ -21,12 +22,12 @@ class FromDateFilter(private val fromDate: Timestamp) : FeedbackFilter {
     }
 }
 
-class DepartmentFilter(private val department: String) : FeedbackFilter {
+class DepartmentFilter(private val department: DepartmentType) : FeedbackFilter {
     override fun apply(
         query: SelectConditionStep<Record2<Long, String>>,
         feedbackTable: FeedbackTable
     ): SelectConditionStep<Record2<Long, String>> {
-        return query.and(feedbackTable.department.eq(department))
+        return query.and(feedbackTable.department.eq(department.name))
     }
 }
 

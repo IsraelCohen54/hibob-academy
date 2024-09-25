@@ -82,7 +82,7 @@ class FeedbackFetcherServiceTest {
     @Test
     fun `filterFeedback should return feedback map when found`() {
         val filters = listOf(
-            DepartmentFilter("IT"),
+            DepartmentFilter(DepartmentType.IT),
             FromDateFilter(Timestamp.valueOf("2024-01-01 00:00:00"))
         )
         val expectedFeedback = mapOf(1L to "Amazing", 2L to "Supreme")
@@ -98,7 +98,7 @@ class FeedbackFetcherServiceTest {
 
     @Test
     fun `filterFeedback should throw IllegalStateException when no feedback is found`() {
-        val filters = listOf(DepartmentFilter("IT"))
+        val filters = listOf(DepartmentFilter(DepartmentType.IT))
 
         whenever(feedbackDao.filterFeedback(dummyUserDetails, filters)).thenReturn(null)
 
