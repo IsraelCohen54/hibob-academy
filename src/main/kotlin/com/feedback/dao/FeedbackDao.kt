@@ -23,7 +23,7 @@ class FeedbackDao(private val sql: DSLContext) {
     fun insertFeedback(userDetails: LoggedInUser, feedback: FeedbackCreationRequest): Long {
         return sql.insertInto(feedbackTable)
             .set(feedbackTable.companyId, userDetails.companyId)
-            .set(feedbackTable.department, feedback.department?.toString())
+            .set(feedbackTable.department, feedback.department?.name)
             .set(feedbackTable.comment, feedback.comment)
             .set(feedbackTable.employeeId, userDetails.employeeId)
             .returning(feedbackTable.id)
@@ -66,7 +66,7 @@ class FeedbackDao(private val sql: DSLContext) {
 
     fun updateFeedbackStatus(userDetails: LoggedInUser, feedbackId: Long, newStatus: StatusType) {
         sql.update(feedbackTable)
-            .set(feedbackTable.status, newStatus.toString())
+            .set(feedbackTable.status, newStatus.name)
             .where(feedbackTable.id.eq(feedbackId))
             .and(feedbackTable.companyId.eq(userDetails.companyId))
             .execute()

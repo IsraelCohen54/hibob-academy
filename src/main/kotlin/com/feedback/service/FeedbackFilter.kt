@@ -27,7 +27,7 @@ class DepartmentFilter(private val department: DepartmentType) : FeedbackFilter 
         query: SelectConditionStep<Record2<Long, String>>,
         feedbackTable: FeedbackTable
     ): SelectConditionStep<Record2<Long, String>> {
-        return query.and(feedbackTable.department.eq(department.toString()))
+        return query.and(feedbackTable.department.eq(department.name))
     }
 }
 
