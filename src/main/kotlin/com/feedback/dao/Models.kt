@@ -18,7 +18,7 @@ data class EmployeeCreationRequest(
     val department: DepartmentType
 )
 
-data class RetrieveFeedbackRequest(
+data class PersistedFeedback(
     val id: Long,
     val department: DepartmentType?,
     val comment: String,
@@ -38,7 +38,7 @@ data class ResponseCreationRequest(
     val responderId: Long
 )
 
-data class RetrieveResponseRequest(
+data class PersistedResponse(
     val id: Long,
     val feedbackId: Long,
     val response: String,

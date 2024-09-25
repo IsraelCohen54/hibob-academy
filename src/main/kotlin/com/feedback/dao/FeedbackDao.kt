@@ -9,8 +9,8 @@ class FeedbackDao(private val sql: DSLContext) {
 
     private val feedbackTable = FeedbackTable.instance
 
-    private val retrieveFeedbackTableMapper = RecordMapper<Record, RetrieveFeedbackRequest> { record ->
-        RetrieveFeedbackRequest(
+    private val retrieveFeedbackTableMapper = RecordMapper<Record, PersistedFeedback> { record ->
+        PersistedFeedback(
             id = record[feedbackTable.id],
             department = record[feedbackTable.department]?.let { DepartmentType.fromString(it) },
             comment = record[feedbackTable.comment],
@@ -32,7 +32,7 @@ class FeedbackDao(private val sql: DSLContext) {
             ?: throw IllegalStateException("Failed to retrieve the generated feedback ID.")
     }
 
-    fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): RetrieveFeedbackRequest? {
+    fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): PersistedFeedback? {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.id.eq(feedbackId)
                 .and(feedbackTable.companyId.eq(userDetails.companyId)))
