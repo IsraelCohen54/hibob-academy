@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 class EmployeeDao(private val sql: DSLContext) {
 
     private val employeeTable = EmployeeTable.instance
-
     private val employeeTableMapper = RecordMapper<Record, RetrieveEmployeeRequest> { record ->
         RetrieveEmployeeRequest(
             id = record[employeeTable.id],
@@ -23,8 +22,10 @@ class EmployeeDao(private val sql: DSLContext) {
 
     fun getEmployee(userDetails: LoggedInUser): RetrieveEmployeeRequest? {
         return sql.selectFrom(employeeTable)
-            .where(employeeTable.id.eq(userDetails.employeeId)
-                .and(employeeTable.companyId.eq(userDetails.companyId)))
+            .where(
+                employeeTable.id.eq(userDetails.employeeId)
+                    .and(employeeTable.companyId.eq(userDetails.companyId))
+            )
             .fetchOne(employeeTableMapper)
     }
 
