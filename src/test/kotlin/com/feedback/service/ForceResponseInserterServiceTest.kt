@@ -10,10 +10,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.random.Random
 
-class ForceResponseInsertionServiceTest {
+class ForceResponseInserterServiceTest {
 
     private val responseDao: ResponseDao = mock {}
-    private val insertResponse = ForceResponseInsertion(responseDao)
+    private val insertResponse = ForceResponseInserter(responseDao)
     private val companyId = Random.nextLong()
 
     private val feedbackId = Random.nextLong()

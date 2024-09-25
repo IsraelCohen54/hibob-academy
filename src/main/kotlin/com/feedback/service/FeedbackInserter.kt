@@ -7,7 +7,7 @@ import com.feedback.dao.LoggedInUser
 import org.springframework.stereotype.Service
 
 @Service
-class FeedbackInsertion(private val feedbackDao: FeedbackDao) {
+class FeedbackInserter(private val feedbackDao: FeedbackDao) {
 
     fun insertFeedback(userDetails: LoggedInUser, feedback: FeedbackCreationRequest): Long {
         return feedbackDao.insertFeedback(userDetails, feedback)

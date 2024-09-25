@@ -6,7 +6,7 @@ import com.feedback.dao.PersistedEmployee
 import org.springframework.stereotype.Service
 
 @Service
-class FetchEmployee(private val employeeDao: EmployeeDao) {
+class EmployeeFetcher(private val employeeDao: EmployeeDao) {
 
     fun getEmployeeDetails(userDetails: LoggedInUser): PersistedEmployee {
         return employeeDao.getEmployee(userDetails)

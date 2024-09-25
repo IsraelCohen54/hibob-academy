@@ -11,10 +11,10 @@ import java.sql.Timestamp
 import java.time.Instant
 import kotlin.random.Random
 
-class FetchFeedbackServiceTest {
+class FeedbackFetcherServiceTest {
 
     private val feedbackDao: FeedbackDao = mock {}
-    private val feedbackService = FetchFeedback(feedbackDao)
+    private val feedbackService = FeedbackFetcher(feedbackDao)
     private val companyId = Random.nextLong()
     private val feedbackId = Random.nextLong()
 

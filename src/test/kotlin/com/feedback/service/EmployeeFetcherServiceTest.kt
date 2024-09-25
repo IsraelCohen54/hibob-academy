@@ -9,10 +9,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.random.Random
 
-class FetchEmployeeServiceTest {
+class EmployeeFetcherServiceTest {
 
     private val employeeDao: EmployeeDao = mock {}
-    private val fetchEmployee = FetchEmployee(employeeDao)
+    private val employeeFetcher = EmployeeFetcher(employeeDao)
     private val companyId = Random.nextLong()
     private val employeeId = Random.nextLong()
 
@@ -30,7 +30,7 @@ class FetchEmployeeServiceTest {
 
         whenever(employeeDao.getEmployee(dummyUserDetails)).thenReturn(dummyPersistedEmployee)
 
-        val result = fetchEmployee.getEmployeeDetails(dummyUserDetails)
+        val result = employeeFetcher.getEmployeeDetails(dummyUserDetails)
 
         assertEquals(dummyPersistedEmployee, result)
         verify(employeeDao).getEmployee(dummyUserDetails)
@@ -41,7 +41,7 @@ class FetchEmployeeServiceTest {
         whenever(employeeDao.getEmployee(dummyUserDetails)).thenReturn(null)
 
         assertEquals("No employee found with ID $employeeId",
-            assertThrows<IllegalStateException> { fetchEmployee.getEmployeeDetails(dummyUserDetails) }.message
+            assertThrows<IllegalStateException> { employeeFetcher.getEmployeeDetails(dummyUserDetails) }.message
         )
 
         verify(employeeDao).getEmployee(dummyUserDetails)

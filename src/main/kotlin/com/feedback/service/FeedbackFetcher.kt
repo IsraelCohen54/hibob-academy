@@ -6,7 +6,7 @@ import com.feedback.dao.PersistedFeedback
 import org.springframework.stereotype.Service
 
 @Service
-class FetchFeedback(private val feedbackDao: FeedbackDao) {
+class FeedbackFetcher(private val feedbackDao: FeedbackDao) {
 
     fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): PersistedFeedback {
         return feedbackDao.getFeedbackById(userDetails, feedbackId)

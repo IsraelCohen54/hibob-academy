@@ -11,10 +11,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.random.Random
 
-class FeedbackInsertionServiceTest {
+class FeedbackInserterServiceTest {
 
     private val feedbackDao: FeedbackDao = mock {}
-    private val feedbackInsertion = FeedbackInsertion(feedbackDao)
+    private val feedbackInserter = FeedbackInserter(feedbackDao)
     private val companyId = Random.nextLong()
 
     private val dummyFeedbackRequest = FeedbackCreationRequest(DepartmentType.IT, "kotlin installation should be done ASAP for any new Bober employee")
@@ -26,7 +26,7 @@ class FeedbackInsertionServiceTest {
 
         whenever(feedbackDao.insertFeedback(dummyUserDetails, dummyFeedbackRequest)).thenReturn(expectedId)
 
-        val result = feedbackInsertion.insertFeedback(dummyUserDetails, dummyFeedbackRequest)
+        val result = feedbackInserter.insertFeedback(dummyUserDetails, dummyFeedbackRequest)
 
         assertEquals(expectedId, result)
 

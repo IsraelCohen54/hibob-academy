@@ -11,10 +11,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.random.Random
 
-class FetchResponseServiceTest {
+class ResponseFetcherServiceTest {
 
     private val responseDao: ResponseDao = mock {}
-    private val fetchResponse = FetchResponse(responseDao)
+    private val responseFetcher = ResponseFetcher(responseDao)
     private val companyId = Random.nextLong()
 
     private val feedbackId = Random.nextLong()
@@ -34,7 +34,7 @@ class FetchResponseServiceTest {
         whenever(responseDao.getResponseByFeedbackId(dummyUserDetails, feedbackId))
             .thenReturn(dummyPersistedResponse)
 
-        val result = fetchResponse.getResponseDetails(dummyUserDetails, feedbackId)
+        val result = responseFetcher.getResponseDetails(dummyUserDetails, feedbackId)
 
         assertEquals(dummyPersistedResponse, result)
         verify(responseDao).getResponseByFeedbackId(dummyUserDetails, feedbackId)
@@ -48,7 +48,7 @@ class FetchResponseServiceTest {
         assertEquals(
             "No response found for feedback ID $feedbackId",
             assertThrows<IllegalStateException> {
-                fetchResponse.getResponseDetails(dummyUserDetails, feedbackId)
+                responseFetcher.getResponseDetails(dummyUserDetails, feedbackId)
             }.message
         )
 

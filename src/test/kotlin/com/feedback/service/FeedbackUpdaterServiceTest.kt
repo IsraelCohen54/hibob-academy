@@ -8,10 +8,10 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import kotlin.random.Random
 
-class FeedbackUpdateServiceTest {
+class FeedbackUpdaterServiceTest {
 
     private val feedbackDao: FeedbackDao = mock()
-    private val feedbackUpdateService = FeedbackUpdate(feedbackDao)
+    private val feedbackUpdaterService = FeedbackUpdater(feedbackDao)
     private val companyId = Random.nextLong()
 
     private val dummyFeedbackId = Random.nextLong()
@@ -20,7 +20,7 @@ class FeedbackUpdateServiceTest {
 
     @Test
     fun `updateFeedbackStatus should call DAO update method with correct parameters`() {
-        feedbackUpdateService.updateFeedbackStatus(dummyUserDetails, dummyFeedbackId, dummyNewStatus)
+        feedbackUpdaterService.updateFeedbackStatus(dummyUserDetails, dummyFeedbackId, dummyNewStatus)
 
         verify(feedbackDao).updateFeedbackStatus(dummyUserDetails, dummyFeedbackId, dummyNewStatus)
     }
