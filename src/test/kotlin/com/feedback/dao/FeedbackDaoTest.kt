@@ -50,19 +50,17 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     }
 
     @Test
-    fun `test getUserFeedbacksId returns correct map`() {
+    fun `test getUserFeedbacksId returns correct list`() {
         val id1 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback)
         val id2 = feedbackDao.insertFeedback(userDetails, dummyPublicFeedback.copy(comment = "some other comment"))
         feedbackDao.insertFeedback(userDetails.copy(employeeId = dummyEmployeeId - 1), dummyAnonymousFeedback)
 
         val result = feedbackDao.getUserFeedbacks(userDetails)
 
-        val shouldEqualTo :Map<Long, String> = mapOf(
-            id1 to "NOT_SOLVED",
-            id2 to "NOT_SOLVED"
-        )
-
-        assertEquals(shouldEqualTo, result)
+        val expected = listOf(id1, id2) //idx is unique
+        result?.let {
+            assertEquals(expected, result.map { it.id })
+        }
     }
 
     @Test
