@@ -24,7 +24,7 @@ class ResponseDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val dummyId : Long = Random.nextLong()
 
     private val dummyResponseCreation = ResponseCreationRequest(dummyFeedbackId, dummyResponse, dummyKnownUserDetails.employeeId!!)
-    private val dummyRetrievedResponse = RetrieveResponseRequest(dummyId,dummyFeedbackId, dummyResponse, dummyKnownUserDetails.employeeId!!)
+    private val dummyRetrievedResponse = PersistedResponse(dummyId,dummyFeedbackId, dummyResponse, dummyKnownUserDetails.employeeId!!)
 
 
 

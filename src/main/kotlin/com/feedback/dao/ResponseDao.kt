@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component
 class ResponseDao(private val sql: DSLContext) {
 
     private val responseTable = ResponseTable.instance
-    private val retrieveResponseTableMapper = RecordMapper<Record, RetrieveResponseRequest> { record ->
-        RetrieveResponseRequest(
+    private val retrieveResponseTableMapper = RecordMapper<Record, PersistedResponse> { record ->
+        PersistedResponse(
             id = record[responseTable.id],
             feedbackId = record[responseTable.feedbackId],
             response = record[responseTable.response],
@@ -33,7 +33,7 @@ class ResponseDao(private val sql: DSLContext) {
             ?: throw IllegalStateException("Failed to retrieve the generated or updated response ID.")
     }
 
-    fun getResponseByFeedbackId(userDetails: LoggedInUser, feedbackId: Long): RetrieveResponseRequest? {
+    fun getResponseByFeedbackId(userDetails: LoggedInUser, feedbackId: Long): PersistedResponse? {
         return sql.selectFrom(responseTable)
             .where(
                 responseTable.feedbackId.eq(feedbackId)

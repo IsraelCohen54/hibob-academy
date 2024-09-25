@@ -15,7 +15,7 @@ class FeedbackDao(private val sql: DSLContext) {
             department = record[feedbackTable.department]?.let { DepartmentType.fromString(it) },
             comment = record[feedbackTable.comment],
             creationTimestamp = record[feedbackTable.creationTimestamp],
-            status = record[feedbackTable.status]?.let { StatusType.fromString(it) } ?: StatusType.NOT_SOLVED,
+            status = StatusType.fromString(record[feedbackTable.status]), //?: StatusType.NOT_SOLVED,
             employeeId = record[feedbackTable.employeeId]
         )
     }
@@ -57,7 +57,7 @@ class FeedbackDao(private val sql: DSLContext) {
     }
 
 
-    fun getUserFeedbacks(userDetails: LoggedInUser): List<RetrieveFeedbackRequest>? {
+    fun getUserFeedbacks(userDetails: LoggedInUser): List<PersistedFeedback>? {
         return sql.selectFrom(feedbackTable)
             .where(feedbackTable.employeeId.eq(userDetails.employeeId))
             .and(feedbackTable.companyId.eq(userDetails.companyId))
