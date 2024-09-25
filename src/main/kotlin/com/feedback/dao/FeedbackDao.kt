@@ -15,7 +15,7 @@ class FeedbackDao(private val sql: DSLContext) {
             department = record[feedbackTable.department]?.let { DepartmentType.fromString(it) },
             comment = record[feedbackTable.comment],
             creationTimestamp = record[feedbackTable.creationTimestamp],
-            status = StatusType.fromString(record[feedbackTable.status]), //?: StatusType.NOT_SOLVED,
+            status = StatusType.fromString(record[feedbackTable.status]),
             employeeId = record[feedbackTable.employeeId]
         )
     }
