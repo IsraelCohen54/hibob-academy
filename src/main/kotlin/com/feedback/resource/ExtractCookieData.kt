@@ -1,7 +1,6 @@
 package com.feedback.resource
 
 import com.feedback.dao.LoggedInUser
-import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.core.Cookie
 import org.springframework.stereotype.Component
 
@@ -10,8 +9,8 @@ import org.springframework.stereotype.Component
 class ExtractCookieData {
 
     fun extractCompanyIdEmployeeId(cookies: Map<String, Cookie>): LoggedInUser {
-        val companyId = cookies["company_id"]?.value?.toLong() ?: throw BadRequestException("Missing company_id")
-        val employeeId = cookies["employee_id"]?.value?.toLong() ?: throw BadRequestException("Missing employee_id")
+        val companyId = cookies["company_id"]?.value?.toLong() ?: throw NumberFormatException("Missing company_id correct value")
+        val employeeId = cookies["employee_id"]?.value?.toLong() ?: throw NumberFormatException("Missing employee_id correct value")
         return LoggedInUser(companyId, employeeId)
     }
 }
