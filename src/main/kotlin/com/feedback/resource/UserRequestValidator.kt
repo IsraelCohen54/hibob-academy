@@ -2,12 +2,16 @@ package com.feedback.resource
 
 
 import com.feedback.dao.LoggedInUser
+import com.feedback.dao.RoleType
+import com.feedback.service.EmployeeFetcher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
+
 @Component
-class UserRequestValidator {
+class UserRequestValidator(private val employeeFetcher: EmployeeFetcher) {
+
 
     private companion object ValidationConstants {
         const val COMPANY_ID_MINIMUM_THRESHOLD = 0L
@@ -19,9 +23,19 @@ class UserRequestValidator {
         this.validateEmployeeId(loggedInUser.employeeId)
     }
 
-    fun validateCommentValue(comment:String) {
+    fun validatePermission(loggedInUser: LoggedInUser) {
+        val userRole = employeeFetcher.getEmployeeDetails(loggedInUser).role
+        if (userRole != RoleType.ADMIN && userRole != RoleType.MANAGER)
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden")
+    }
+
+
+    fun validateCommentValue(comment: String) {
         if (comment.isBlank() || comment.length <= 20) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid comment value: $comment. It should be at least 21 characters long and not empty.")
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid comment value: $comment. It should be at least 21 characters long and not empty."
+            )
         }
     }
 

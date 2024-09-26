@@ -47,6 +47,7 @@ class FeedbackResource(
     fun viewFeedback(feedbackRequest: FilterFeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         userRequestValidator.validateLoginValue(loggedInUser)
+        userRequestValidator.validatePermission(loggedInUser)
 
         val filters = requestPreparetor.prepareViewWithFilterRequest(feedbackRequest)
         val feedbackMap = feedbackFetcher.filterFeedback(loggedInUser, filters)
