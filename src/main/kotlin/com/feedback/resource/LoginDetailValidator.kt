@@ -18,7 +18,7 @@ class LoginDetailValidator {
         if (companyId < COMPANY_ID_MINIMUM_THRESHOLD) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Invalid company ID value: $companyId, it should be grater than ${COMPANY_ID_MINIMUM_THRESHOLD}."
+                "Invalid company ID value: $companyId, it should be greater than ${COMPANY_ID_MINIMUM_THRESHOLD}."
             )
         }
     }
