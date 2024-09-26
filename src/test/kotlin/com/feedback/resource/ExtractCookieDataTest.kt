@@ -9,6 +9,7 @@ class ExtractCookiesDataTest {
 
     private val cookiesDataExtractor = CookiesDataExtractor()
     private val extractCookieData = ExtractCookieData()
+    private val cookiesDataExtractor = CookiesDataExtractor()
 
     @Test
     fun `should extract companyId and employeeId from cookies`() {
@@ -17,6 +18,7 @@ class ExtractCookiesDataTest {
             "employee_id" to Cookie.Builder("employee_id").value("2").build()
         )
 
+        val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         val loggedInUser = extractCookieData.extractCompanyIdEmployeeId(cookies)
 
@@ -33,6 +35,7 @@ class ExtractCookiesDataTest {
             assertThrows<NumberFormatException> {
                 cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
                 extractCookieData.extractCompanyIdEmployeeId(cookies)
+                cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
             }.message
         )
     }
@@ -44,6 +47,7 @@ class ExtractCookiesDataTest {
         assertEquals(
             "Missing employee_id correct value",
             assertThrows<NumberFormatException> {
+                cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
                 cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
                 extractCookieData.extractCompanyIdEmployeeId(cookies)
             }.message
