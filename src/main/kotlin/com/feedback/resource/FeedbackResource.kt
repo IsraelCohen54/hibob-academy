@@ -58,6 +58,9 @@ class FeedbackResource(
             feedbackRequest.isAnonymous,
             feedbackRequest.comment
         )
+        val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
+        val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
+
         feedbackInserter.insertFeedback(loggedInUser, feedbackCreationRequest)
 
         return Response.status(Status.OK).build()
