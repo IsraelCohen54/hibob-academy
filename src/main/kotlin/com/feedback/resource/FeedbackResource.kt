@@ -32,11 +32,11 @@ class FeedbackResource(
     ): Response {
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
 
-        val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
-        val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
-
         loginDetailValidator.validateCompanyId(loggedInUser.companyId)
         loginDetailValidator.validateEmployeeId(loggedInUser.employeeId)
+
+        val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
+        val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
 
         feedbackInserter.insertFeedback(loggedInUser, feedbackCreationRequest)
 
