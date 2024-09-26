@@ -10,8 +10,7 @@ import org.springframework.web.server.ResponseStatusException
 
 
 @Component
-class UserRequestValidator(private val employeeFetcher: EmployeeFetcher) {
-
+class RequestValidator(private val employeeFetcher: EmployeeFetcher) {
 
     private companion object ValidationConstants {
         const val COMPANY_ID_MINIMUM_THRESHOLD = 0L
@@ -29,7 +28,6 @@ class UserRequestValidator(private val employeeFetcher: EmployeeFetcher) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden")
     }
 
-
     fun validateCommentValue(comment: String) {
         if (comment.isBlank() || comment.length <= 20) {
             throw ResponseStatusException(
@@ -38,7 +36,6 @@ class UserRequestValidator(private val employeeFetcher: EmployeeFetcher) {
             )
         }
     }
-
 
     private fun validateCompanyId(companyId: Long) {
         if (companyId < COMPANY_ID_MINIMUM_THRESHOLD) {

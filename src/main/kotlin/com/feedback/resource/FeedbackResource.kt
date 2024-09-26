@@ -20,18 +20,17 @@ import java.sql.Timestamp
 @Consumes("application/json")
 class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor,
-    private val userRequestValidator: UserRequestValidator,
+    private val requestValidator: RequestValidator,
     private val requestPreparetor: RequestPreparetor,
     private val feedbackInserter: FeedbackInserter,
     private val feedbackFetcher: FeedbackFetcher,
 ) {
-
     @POST
     fun submitFeedback(feedbackRequest: FeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
-        userRequestValidator.validateLoginValue(loggedInUser)
-        userRequestValidator.validateCommentValue(feedbackRequest.comment)
+        requestValidator.validateLoginValue(loggedInUser)
+        requestValidator.validateCommentValue(feedbackRequest.comment)
 
         val feedbackCreationRequest = requestPreparetor.prepareRequestWithAnonymity(
             loggedInUser,
@@ -46,8 +45,8 @@ class FeedbackResource(
     @POST
     fun viewFeedback(feedbackRequest: FilterFeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
-        userRequestValidator.validateLoginValue(loggedInUser)
-        userRequestValidator.validatePermission(loggedInUser)
+        requestValidator.validateLoginValue(loggedInUser)
+        requestValidator.validatePermission(loggedInUser)
 
         val filters = requestPreparetor.prepareViewWithFilterRequest(feedbackRequest)
         val feedbackMap = feedbackFetcher.filterFeedback(loggedInUser, filters)
