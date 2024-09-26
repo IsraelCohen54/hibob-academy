@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 
 @Component
-class ExtractCookieData {
+class CookiesDataExtractor {
 
     fun extractCompanyIdEmployeeId(cookies: Map<String, Cookie>): LoggedInUser {
         val companyId = cookies["company_id"]?.value?.toLong() ?: throw NumberFormatException("Missing company_id correct value")

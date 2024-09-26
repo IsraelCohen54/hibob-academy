@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertThrows
 
 class ExtractCookiesDataTest {
 
-    private val extractCookieData = ExtractCookieData()
+    private val cookiesDataExtractor = CookiesDataExtractor()
 
     @Test
     fun `should extract companyId and employeeId from cookies`() {
@@ -16,7 +16,7 @@ class ExtractCookiesDataTest {
             "employee_id" to Cookie.Builder("employee_id").value("2").build()
         )
 
-        val loggedInUser = extractCookieData.extractCompanyIdEmployeeId(cookies)
+        val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
 
         assertEquals(1L, loggedInUser.companyId)
         assertEquals(2L, loggedInUser.employeeId)
@@ -29,7 +29,7 @@ class ExtractCookiesDataTest {
         assertEquals(
             "Missing company_id correct value",
             assertThrows<NumberFormatException> {
-                extractCookieData.extractCompanyIdEmployeeId(cookies)
+                cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
             }.message
         )
     }
@@ -41,7 +41,7 @@ class ExtractCookiesDataTest {
         assertEquals(
             "Missing employee_id correct value",
             assertThrows<NumberFormatException> {
-                extractCookieData.extractCompanyIdEmployeeId(cookies)
+                cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
             }.message
         )
     }
