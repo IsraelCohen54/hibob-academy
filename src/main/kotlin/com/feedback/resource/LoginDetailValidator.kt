@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
 @Component
-class LoginDetailsValidator {
+class LoginDetailValidator {
 
     private companion object ValidationConstants {
         const val COMPANY_ID_MINIMUM_THRESHOLD = 0L
