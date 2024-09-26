@@ -32,8 +32,8 @@ class FeedbackResource(
     private val feedbackFetcher: FeedbackFetcher,
     private val feedbackUpdater: FeedbackUpdater,
     private val employeeFetcher: EmployeeFetcher,
-    private val loginDetailsValidator: LoginDetailsValidator,
-    private val extractCookiesData: ExtractCookiesData
+    private val loginDetailValidator: LoginDetailValidator,
+    private val extractCookieData: ExtractCookieData
 ) {
 
     @POST
@@ -42,7 +42,7 @@ class FeedbackResource(
         feedbackRequest: FeedbackRequest,
         @Context cookies: Map<String, Cookie>
     ): Response {
-        val loggedInUser = extractCookiesData.extractCompanyIdEmployeeId(cookies)
+        val loggedInUser = extractCookieData.extractCompanyIdEmployeeId(cookies)
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         requestValidator.validateLoginValue(loggedInUser)
@@ -50,8 +50,8 @@ class FeedbackResource(
         val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
         val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
 
-        loginDetailsValidator.validateCompanyId(loggedInUser.companyId)
-        loginDetailsValidator.validateEmployeeId(loggedInUser.employeeId)
+        loginDetailValidator.validateCompanyId(loggedInUser.companyId)
+        loginDetailValidator.validateEmployeeId(loggedInUser.employeeId)
 
         val feedbackCreationRequest = requestPreparetor.prepareRequestWithAnonymity(
             loggedInUser,
