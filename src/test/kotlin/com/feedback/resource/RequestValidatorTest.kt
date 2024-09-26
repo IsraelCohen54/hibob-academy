@@ -18,6 +18,7 @@ class RequestValidatorTest {
 
     private val employeeFetcher: EmployeeFetcher = mock()
     private val requestValidator = RequestValidator(employeeFetcher)
+    private val userRequestValidator = UserRequestValidator()
 
     private companion object {
         private const val LEGIT_COMPANY_ID_NUM = 1L
@@ -30,6 +31,7 @@ class RequestValidatorTest {
     fun `validateCompanyId positive value positive`() {
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateLoginValue(
+            userRequestValidator.validateLoginValue(
                 LoggedInUser(
                     companyId = NON_LEGIT_COMPANY_ID_NUM,
                     employeeId = LEGIT_EMPLOYEE_ID_NUM
@@ -47,6 +49,7 @@ class RequestValidatorTest {
     fun `validateEmployeeId positive value positive`() {
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateLoginValue(
+            userRequestValidator.validateLoginValue(
                 LoggedInUser(
                     companyId = LEGIT_COMPANY_ID_NUM,
                     employeeId = NON_LEGIT_EMPLOYEE_ID_NUM
@@ -66,6 +69,7 @@ class RequestValidatorTest {
 
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateCommentValue(blankComment)
+            userRequestValidator.validateCommentValue(blankComment)
         }
 
         val expectedMessage =
@@ -82,6 +86,7 @@ class RequestValidatorTest {
     fun `validateCommentValue throws exception if comment is too short`() {
         val shortComment = "Too short"
         val exception = assertThrows<ResponseStatusException> {
+            userRequestValidator.validateCommentValue(shortComment)
             requestValidator.validateCommentValue(shortComment)
         }
 

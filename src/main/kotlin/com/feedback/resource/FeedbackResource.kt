@@ -6,6 +6,8 @@ import com.feedback.service.FeedbackFetcher
 import com.feedback.dao.FeedbackCreationRequest
 import com.feedback.dao.LoggedInUser
 import com.feedback.service.EmployeeFetcher
+import com.feedback.dao.DepartmentType
+import com.feedback.service.FeedbackFetcher
 import com.feedback.service.FeedbackInserter
 import com.feedback.service.FeedbackUpdater
 import jakarta.ws.rs.*
@@ -28,12 +30,16 @@ class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor,
     private val requestValidator: RequestValidator,
     private val requestPreparetor: RequestPreparetor,
+    private val cookiesDataExtractor: CookiesDataExtractor,
+    private val userRequestValidator: UserRequestValidator,
+    private val requestPreparetor: RequestPreparetor,
     private val feedbackInserter: FeedbackInserter,
     private val feedbackFetcher: FeedbackFetcher,
     private val feedbackUpdater: FeedbackUpdater,
     private val employeeFetcher: EmployeeFetcher,
     private val loginDetailValidator: LoginDetailValidator,
     private val cookiesDataExtractor: CookiesDataExtractor
+    private val feedbackFetcher: FeedbackFetcher,
 ) {
 
     @POST
@@ -42,6 +48,8 @@ class FeedbackResource(
         feedbackRequest: FeedbackRequest,
         @Context cookies: Map<String, Cookie>
     ): Response {
+    fun submitFeedback(feedbackRequest: FeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
+
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
@@ -52,6 +60,8 @@ class FeedbackResource(
 
         loginDetailValidator.validateCompanyId(loggedInUser.companyId)
         loginDetailValidator.validateEmployeeId(loggedInUser.employeeId)
+        userRequestValidator.validateLoginValue(loggedInUser)
+        userRequestValidator.validateCommentValue(feedbackRequest.comment)
 
         val feedbackCreationRequest = requestPreparetor.prepareRequestWithAnonymity(
             loggedInUser,
@@ -61,6 +71,11 @@ class FeedbackResource(
         val department = fetchEmployeeDepartmentByAnonymity(loggedInUser, feedbackRequest.isAnonymous)
         val feedbackCreationRequest = FeedbackCreationRequest(department, feedbackRequest.comment)
 
+        val feedbackCreationRequest = requestPreparetor.prepareRequestWithAnonymity(
+            loggedInUser,
+            feedbackRequest.isAnonymous,
+            feedbackRequest.comment
+        )
         feedbackInserter.insertFeedback(loggedInUser, feedbackCreationRequest)
 
         return Response.status(Status.OK).build()
@@ -96,7 +111,15 @@ class FeedbackResource(
         requestValidator.validateStatusUpdater(statusUpdateRequest)
     private fun fetchEmployeeDepartmentByAnonymity(loggedInUser: LoggedInUser, isAnonymous: Boolean) =
         if (isAnonymous) null else employeeFetcher.getEmployeeDetails(loggedInUser).department
+    @POST
+    fun viewFeedback(feedbackRequest: FilterFeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
+        val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
+        userRequestValidator.validateLoginValue(loggedInUser)
 
+        val filters = requestPreparetor.prepareViewWithFilterRequest(feedbackRequest)
+        val feedbackMap = feedbackFetcher.filterFeedback(loggedInUser, filters)
+        return Response.ok(feedbackMap).build()
+    }
         feedbackUpdater.updateFeedbackStatus(
             loggedInUser, statusUpdateRequest.feedbackId, StatusType.fromString(statusUpdateRequest.status)
         )

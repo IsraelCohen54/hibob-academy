@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component
 @Component
 class RequestPreparetor(private val employeeFetcher: EmployeeFetcher)
 {
+class RequestPreparetor(
+    private val employeeFetcher: EmployeeFetcher,
+) {
     fun prepareRequestWithAnonymity(loggedInUser: LoggedInUser, isAnonymous: Boolean, comment: String) =
         if (isAnonymous) FeedbackCreationRequest(department = null, comment = comment)
         else FeedbackCreationRequest(
