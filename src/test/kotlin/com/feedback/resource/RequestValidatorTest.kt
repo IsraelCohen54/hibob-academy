@@ -19,6 +19,8 @@ class RequestValidatorTest {
     private val employeeFetcher: EmployeeFetcher = mock()
     private val requestValidator = RequestValidator(employeeFetcher)
     private val userRequestValidator = UserRequestValidator()
+    private val employeeFetcher: EmployeeFetcher = mock()
+    private val requestValidator = RequestValidator(employeeFetcher)
 
     private companion object {
         private const val LEGIT_COMPANY_ID_NUM = 1L
@@ -30,6 +32,7 @@ class RequestValidatorTest {
     @Test
     fun `validateCompanyId positive value positive`() {
         val exception = assertThrows<ResponseStatusException> {
+            requestValidator.validateLoginValue(
             requestValidator.validateLoginValue(
             userRequestValidator.validateLoginValue(
                 LoggedInUser(
@@ -50,6 +53,7 @@ class RequestValidatorTest {
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateLoginValue(
             userRequestValidator.validateLoginValue(
+            requestValidator.validateLoginValue(
                 LoggedInUser(
                     companyId = LEGIT_COMPANY_ID_NUM,
                     employeeId = NON_LEGIT_EMPLOYEE_ID_NUM
@@ -70,6 +74,7 @@ class RequestValidatorTest {
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateCommentValue(blankComment)
             userRequestValidator.validateCommentValue(blankComment)
+            requestValidator.validateCommentValue(blankComment)
         }
 
         val expectedMessage =
@@ -88,6 +93,7 @@ class RequestValidatorTest {
         val exception = assertThrows<ResponseStatusException> {
             userRequestValidator.validateCommentValue(shortComment)
             requestValidator.validateCommentValue(shortComment)
+            requestValidator.validateCommentValue(shortComment)
         }
 
         val expectedMessage =
@@ -98,6 +104,25 @@ class RequestValidatorTest {
         val actualMessage = exception.message
 
         assertTrue(actualMessage?.contains(expectedMessage) == true, "Expected message not found in actual message.")
+    }
+
+    @Test
+    fun `validatePermission throws exception for non-admin or non-manager user`() {
+        val loggedInUser = LoggedInUser(companyId = 1L, employeeId = 1L)
+
+        whenever(employeeFetcher.getEmployeeDetails(loggedInUser)).thenReturn(PersistedEmployee(
+            id = 1L,
+            firstName = "a",
+            lastName = "b",
+            role = RoleType.EMPLOYEE, department = DepartmentType.IT)
+        )
+
+        val exception = assertThrows<ResponseStatusException> {
+            requestValidator.validatePermission(loggedInUser)
+        }
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.statusCode)
+        assertEquals("Forbidden", exception.reason)
     }
 
     @Test

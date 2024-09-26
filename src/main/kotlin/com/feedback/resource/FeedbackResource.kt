@@ -29,6 +29,7 @@ import java.sql.Timestamp
 class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor,
     private val requestValidator: RequestValidator,
+    private val requestValidator: RequestValidator,
     private val requestPreparetor: RequestPreparetor,
     private val cookiesDataExtractor: CookiesDataExtractor,
     private val userRequestValidator: UserRequestValidator,
@@ -41,7 +42,6 @@ class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor
     private val feedbackFetcher: FeedbackFetcher,
 ) {
-
     @POST
     fun submitFeedback(feedbackRequest: FeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
     fun submitFeedback(
@@ -51,6 +51,8 @@ class FeedbackResource(
     fun submitFeedback(feedbackRequest: FeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
+        requestValidator.validateLoginValue(loggedInUser)
+        requestValidator.validateCommentValue(feedbackRequest.comment)
 
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
         requestValidator.validateLoginValue(loggedInUser)
@@ -114,8 +116,8 @@ class FeedbackResource(
     @POST
     fun viewFeedback(feedbackRequest: FilterFeedbackRequest, @Context cookies: Map<String, Cookie>): Response {
         val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
-        userRequestValidator.validateLoginValue(loggedInUser)
-        userRequestValidator.validatePermission(loggedInUser)
+        requestValidator.validateLoginValue(loggedInUser)
+        requestValidator.validatePermission(loggedInUser)
 
         val filters = requestPreparetor.prepareViewWithFilterRequest(feedbackRequest)
         val feedbackMap = feedbackFetcher.filterFeedback(loggedInUser, filters)
