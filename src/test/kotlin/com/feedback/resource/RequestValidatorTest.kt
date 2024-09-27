@@ -110,11 +110,13 @@ class RequestValidatorTest {
     fun `validatePermission throws exception for non-admin or non-manager user`() {
         val loggedInUser = LoggedInUser(companyId = 1L, employeeId = 1L)
 
-        whenever(employeeFetcher.getEmployeeDetails(loggedInUser)).thenReturn(PersistedEmployee(
-            id = 1L,
-            firstName = "a",
-            lastName = "b",
-            role = RoleType.EMPLOYEE, department = DepartmentType.IT)
+        whenever(employeeFetcher.getEmployeeDetails(loggedInUser)).thenReturn(
+            PersistedEmployee(
+                id = 1L,
+                firstName = "a",
+                lastName = "b",
+                role = RoleType.EMPLOYEE, department = DepartmentType.IT
+            )
         )
 
         val exception = assertThrows<ResponseStatusException> {
@@ -144,6 +146,30 @@ class RequestValidatorTest {
 
         assertEquals(HttpStatus.FORBIDDEN, exception.statusCode)
         assertEquals("Forbidden", exception.reason)
+    }
+
+    @Test
+    fun `validateStatusUpdater should throw exception for feedbackId below threshold`() {
+        val statusUpdateRequest = StatusUpdateRequest(status = "reviewed", feedbackId = -1)
+
+        assertEquals(
+            "Feedback ID must be a positive number.",
+            assertThrows<IllegalArgumentException> {
+                requestValidator.validateStatusUpdater(statusUpdateRequest)
+            }.message
+        )
+    }
+
+    @Test
+    fun `validateStatusUpdater should throw exception for invalid status`() {
+        val statusUpdateRequest = StatusUpdateRequest(status = "invalid_status", feedbackId = 1)
+
+        assertEquals(
+            "Invalid status value: invalid_status",
+            assertThrows<IllegalArgumentException> {
+                requestValidator.validateStatusUpdater(statusUpdateRequest)
+            }.message
+        )
     }
 
     @Test
