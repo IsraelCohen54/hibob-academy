@@ -3,6 +3,7 @@ package com.feedback.resource
 
 import com.feedback.dao.LoggedInUser
 import com.feedback.dao.RoleType
+import com.feedback.dao.StatusType
 import com.feedback.service.EmployeeFetcher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -15,6 +16,7 @@ class RequestValidator(private val employeeFetcher: EmployeeFetcher) {
     private companion object ValidationConstants {
         const val COMPANY_ID_MINIMUM_THRESHOLD = 0L
         const val EMPLOYEE_ID_MINIMUM_THRESHOLD = 0L
+        const val FEEDBACK_ID_MINIMUM_THRESHOLD = 0L
     }
 
     fun validateLoginValue(loggedInUser: LoggedInUser) {
@@ -36,6 +38,19 @@ class RequestValidator(private val employeeFetcher: EmployeeFetcher) {
             )
         }
     }
+
+    fun validateStatusUpdater(statusUpdateRequest: StatusUpdateRequest) {
+        if (statusUpdateRequest.feedbackId < FEEDBACK_ID_MINIMUM_THRESHOLD) {
+            throw IllegalArgumentException("Feedback ID must be a positive number.")
+        }
+
+        try {
+            StatusType.fromString(statusUpdateRequest.status)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid status value: ${statusUpdateRequest.status}")
+        }
+    }
+
 
     private fun validateCompanyId(companyId: Long) {
         if (companyId < COMPANY_ID_MINIMUM_THRESHOLD) {
