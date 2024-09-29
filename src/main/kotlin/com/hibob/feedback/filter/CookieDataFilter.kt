@@ -1,24 +1,24 @@
-package com.hibob.academy.filter
+package com.hibob.feedback.filter
 
-
-import com.hibob.feedback.service.FeedbackService
+import com.hibob.feedback.service.FeedbackService.Companion.SECRET_KEY
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.container.ContainerRequestFilter
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.ext.Provider
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 
-const val CREATE_TOKEN_PATH = "api/createToken"
+const val CREATE_TOKEN_PATH = "api/createTokenFeedback"
 const val COOKIE_NAME = "JWT"
 
-//@Component
-//@Provider
-class AuthenticationFilter: ContainerRequestFilter {
+@Component
+@Provider
+class CookieDataFilter : ContainerRequestFilter {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun filter(requestContext: ContainerRequestContext) {
-
         if (requestContext.uriInfo.path != CREATE_TOKEN_PATH) {
             verify(requestContext.cookies[COOKIE_NAME]?.value, requestContext)
             logger.info("Authorized successfully")
@@ -29,7 +29,7 @@ class AuthenticationFilter: ContainerRequestFilter {
         cookie?.let {
             try {
                 val claims: Claims = Jwts.parser()
-                    .setSigningKey(FeedbackService.SECRET_KEY)
+                    .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(it)
                     .body
 
@@ -47,6 +47,6 @@ class AuthenticationFilter: ContainerRequestFilter {
 
     private fun abortUnauthorized(requestContext: ContainerRequestContext, e: Exception) {
         requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
-        logger.warn("Authorized failure - exception: $e")
+        logger.warn("Authorization failure - exception: ${e.message}")
     }
 }

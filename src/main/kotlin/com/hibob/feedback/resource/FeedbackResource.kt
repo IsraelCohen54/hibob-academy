@@ -1,23 +1,15 @@
-package com.feedback.resource
+package com.hibob.feedback.resource
 
-import com.feedback.dao.DepartmentType
-import com.feedback.dao.StatusType
-import com.feedback.service.FeedbackFetcher
 import com.feedback.dao.FeedbackCreationRequest
 import com.feedback.dao.LoggedInUser
 import com.feedback.service.EmployeeFetcher
-import com.feedback.dao.DepartmentType
-import com.feedback.dao.StatusType
-import com.feedback.service.FeedbackFetcher
-import com.feedback.service.FeedbackInserter
-import com.feedback.service.FeedbackUpdater
+import com.hibob.feedback.dao.DepartmentType
+import com.hibob.feedback.dao.StatusType
+import com.hibob.feedback.service.FeedbackFetcher
+import com.hibob.feedback.service.FeedbackInserter
+import com.hibob.feedback.service.FeedbackUpdater
 import jakarta.ws.rs.*
-import jakarta.ws.rs.Consumes
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.Path
-import jakarta.ws.rs.Produces
-import com.feedback.service.FeedbackUpdater
-import jakarta.ws.rs.*
+import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Cookie
 import jakarta.ws.rs.core.Response
@@ -26,9 +18,9 @@ import org.springframework.stereotype.Component
 import java.sql.Timestamp
 
 @Component
+@Path("/api/feedback")
 @Produces("application/json")
 @Consumes("application/json")
-@Path("/api/feedback")
 class FeedbackResource(
     private val cookiesDataExtractor: CookiesDataExtractor,
     private val requestValidator: RequestValidator,
@@ -42,6 +34,7 @@ class FeedbackResource(
     private val feedbackUpdater: FeedbackUpdater,
 
     ) {
+
     private val feedbackUpdater: FeedbackUpdater,
     private val employeeFetcher: EmployeeFetcher,
     private val loginDetailValidator: LoginDetailValidator,
@@ -124,16 +117,20 @@ class FeedbackResource(
 
     @PATCH
     @Path("/status")
-    fun updateFeedbackStatus(statusUpdateRequest: StatusUpdateRequest, @Context cookies: Map<String, Cookie>): Response {
-        val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId(cookies)
-        requestValidator.validateLoginValue(loggedInUser)
+    fun updateFeedbackStatus(statusUpdateRequest: StatusUpdateRequest, @Context requestContext: ContainerRequestContext)/*: Response*/
+    {
+        val companyId = (requestContext.getProperty("companyId") as Number?)?.toLong()
+        val employeeId = (requestContext.getProperty("employeeId") as Number?)?.toLong()
+
+        //val loggedInUser = cookiesDataExtractor.extractCompanyIdEmployeeId("statusUpdateRequest", requestContext.cookies["JWT"].value)
+        //requestValidator.validateLoginValue(loggedInUser)
         requestValidator.validateStatusUpdater(statusUpdateRequest)
 
-        feedbackUpdater.updateFeedbackStatus(
-            loggedInUser, statusUpdateRequest.feedbackId, StatusType.fromString(statusUpdateRequest.status)
-        )
+        //feedbackUpdater.updateFeedbackStatus(
+        //    loggedInUser, statusUpdateRequest.feedbackId, StatusType.fromString(statusUpdateRequest.status)
+        //)
 
-        return Response.ok().entity("Status updated successfully").build()
+        //return Response.ok().entity("Status updated successfully").build()
     }
 }
 

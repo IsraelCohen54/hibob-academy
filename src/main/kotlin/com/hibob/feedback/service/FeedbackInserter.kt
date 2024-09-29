@@ -1,13 +1,12 @@
-package com.feedback.service
+package com.hibob.feedback.service
 
 
-import com.feedback.dao.FeedbackCreationRequest
-import com.feedback.dao.FeedbackDao
-import com.feedback.dao.LoggedInUser
+import com.hibob.feedback.dao.FeedbackCreationRequest
+import com.hibob.feedback.dao.LoggedInUser
 import org.springframework.stereotype.Service
 
 @Service
-class FeedbackInserter(private val feedbackDao: FeedbackDao) {
+class FeedbackInserter(private val feedbackDao: com.hibob.feedback.dao.FeedbackDao) {
 
     fun insertFeedback(userDetails: LoggedInUser, feedback: FeedbackCreationRequest): Long {
         return feedbackDao.insertFeedback(userDetails, feedback)

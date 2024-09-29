@@ -1,12 +1,11 @@
-package com.feedback.service
+package com.hibob.feedback.service
 
-import com.feedback.dao.FeedbackDao
-import com.feedback.dao.LoggedInUser
-import com.feedback.dao.PersistedFeedback
+import com.hibob.feedback.dao.LoggedInUser
+import com.hibob.feedback.dao.PersistedFeedback
 import org.springframework.stereotype.Service
 
 @Service
-class FeedbackFetcher(private val feedbackDao: FeedbackDao) {
+class FeedbackFetcher(private val feedbackDao: com.hibob.feedback.dao.FeedbackDao) {
 
     fun getFeedbackById(userDetails: LoggedInUser, feedbackId: Long): PersistedFeedback {
         return feedbackDao.getFeedbackById(userDetails, feedbackId)
