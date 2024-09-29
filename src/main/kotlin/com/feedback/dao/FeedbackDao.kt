@@ -43,15 +43,15 @@ class FeedbackDao(private val sql: DSLContext) {
 
 
     fun filterFeedback(userDetails: LoggedInUser, filters: List<FeedbackFilter>): Map<Long, String>? {
-        var query: SelectConditionStep<Record2<Long, String>> = sql.select(feedbackTable.id, feedbackTable.comment)
+        val initialQuery: SelectConditionStep<Record2<Long, String>> = sql.select(feedbackTable.id, feedbackTable.comment)
             .from(feedbackTable)
             .where(feedbackTable.companyId.eq(userDetails.companyId))
 
-        filters.forEach { filter ->
-            query = filter.apply(query, feedbackTable)
+        val finalQuery = filters.fold(initialQuery) { acc, filter ->
+            filter.apply(acc, feedbackTable)
         }
 
-        return query.fetch().associate { record ->
+        return finalQuery.fetch().associate { record ->
             record[feedbackTable.id] to record[feedbackTable.comment]
         }
     }
