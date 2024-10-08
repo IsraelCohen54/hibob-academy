@@ -1,6 +1,5 @@
 package com.feedback.service
 
-import com.feedback.dao.FeedbackDao
 import com.feedback.dao.LoggedInUser
 import com.feedback.dao.StatusType
 import org.junit.jupiter.api.Test
@@ -10,7 +9,7 @@ import kotlin.random.Random
 
 class FeedbackUpdaterServiceTest {
 
-    private val feedbackDao: FeedbackDao = mock()
+    private val feedbackDao: com.hibob.feedback.dao.FeedbackDao = mock()
     private val feedbackUpdaterService = FeedbackUpdater(feedbackDao)
     private val companyId = Random.nextLong()
 

@@ -1,8 +1,8 @@
-package com.feedback.service
+package com.hibob.feedback.service
 
-import com.feedback.dao.EmployeeDao
-import com.feedback.dao.LoggedInUser
-import com.feedback.dao.PersistedEmployee
+import com.hibob.feedback.dao.EmployeeDao
+import com.hibob.feedback.dao.LoggedInUser
+import com.hibob.feedback.dao.PersistedEmployee
 import org.springframework.stereotype.Service
 
 @Service

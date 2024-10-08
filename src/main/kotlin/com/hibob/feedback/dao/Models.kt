@@ -1,4 +1,4 @@
-package com.feedback.dao
+package com.hibob.feedback.dao
 
 import com.hibob.nullability_exercises.nullSafeToUpper
 import java.sql.Timestamp

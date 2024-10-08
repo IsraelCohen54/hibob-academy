@@ -1,10 +1,10 @@
-package com.feedback.resource
+package com.hibob.feedback.resource
 
 
-import com.feedback.dao.LoggedInUser
-import com.feedback.dao.RoleType
-import com.feedback.dao.StatusType
-import com.feedback.service.EmployeeFetcher
+import com.hibob.feedback.dao.LoggedInUser
+import com.hibob.feedback.dao.RoleType
+import com.hibob.feedback.dao.StatusType
+import com.hibob.feedback.service.EmployeeFetcher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException

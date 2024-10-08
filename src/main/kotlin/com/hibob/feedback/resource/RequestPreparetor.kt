@@ -1,11 +1,16 @@
-package com.feedback.resource
+package com.hibob.feedback.resource
 
-import com.feedback.dao.FeedbackCreationRequest
-import com.feedback.dao.LoggedInUser
-import com.feedback.service.*
+import com.hibob.feedback.dao.FeedbackCreationRequest
+import com.hibob.feedback.dao.LoggedInUser
+import com.hibob.feedback.service.*
 import org.springframework.stereotype.Component
 
 @Component
+class RequestPreparetor(private val employeeFetcher: EmployeeFetcher)
+{
+class RequestPreparetor(
+    private val employeeFetcher: EmployeeFetcher,
+) {
 class RequestPreparetor(private val employeeFetcher: EmployeeFetcher)
 {
     fun prepareRequestWithAnonymity(loggedInUser: LoggedInUser, isAnonymous: Boolean, comment: String) =

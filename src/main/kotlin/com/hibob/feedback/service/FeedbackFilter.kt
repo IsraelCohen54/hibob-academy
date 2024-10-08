@@ -1,7 +1,7 @@
-package com.feedback.service
+package com.hibob.feedback.service
 
-import com.feedback.dao.DepartmentType
-import com.feedback.dao.FeedbackTable
+import com.hibob.feedback.dao.DepartmentType
+import com.hibob.feedback.dao.FeedbackTable
 import org.jooq.Record2
 import org.jooq.SelectConditionStep
 import java.sql.Timestamp

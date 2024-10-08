@@ -19,7 +19,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     private val feedbackTable = FeedbackTable.instance
     private val companyId = Random.nextLong()
-    private val feedbackDao = FeedbackDao(sql)
+    private val feedbackDao = com.hibob.feedback.dao.FeedbackDao(sql)
 
     private val dummyEmployeeId = Random.nextLong()
     private val notExistFeedbackId = 999L

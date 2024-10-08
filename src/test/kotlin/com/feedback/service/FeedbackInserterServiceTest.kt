@@ -2,7 +2,6 @@ package com.feedback.service
 
 import com.feedback.dao.DepartmentType
 import com.feedback.dao.FeedbackCreationRequest
-import com.feedback.dao.FeedbackDao
 import com.feedback.dao.LoggedInUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -13,7 +12,7 @@ import kotlin.random.Random
 
 class FeedbackInserterServiceTest {
 
-    private val feedbackDao: FeedbackDao = mock {}
+    private val feedbackDao: com.hibob.feedback.dao.FeedbackDao = mock {}
     private val feedbackInserter = FeedbackInserter(feedbackDao)
     private val companyId = Random.nextLong()
 

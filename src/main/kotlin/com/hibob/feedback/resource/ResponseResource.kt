@@ -1,8 +1,8 @@
-package com.feedback.resource
+package com.hibob.feedback.resource
 
-import com.feedback.dao.ResponseCreationRequest
-import com.feedback.service.ForceResponseInserter
-import com.feedback.service.ResponseFetcher
+import com.hibob.feedback.dao.ResponseCreationRequest
+import com.hibob.feedback.service.ForceResponseInserter
+import com.hibob.feedback.service.ResponseFetcher
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Cookie

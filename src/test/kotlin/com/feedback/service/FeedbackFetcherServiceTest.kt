@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 class FeedbackFetcherServiceTest {
 
-    private val feedbackDao: FeedbackDao = mock {}
+    private val feedbackDao: com.hibob.feedback.dao.FeedbackDao = mock {}
     private val feedbackService = FeedbackFetcher(feedbackDao)
     private val companyId = Random.nextLong()
     private val feedbackId = Random.nextLong()

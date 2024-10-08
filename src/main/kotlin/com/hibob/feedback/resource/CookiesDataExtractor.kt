@@ -1,6 +1,6 @@
-package com.feedback.resource
+package com.hibob.feedback.resource
 
-import com.feedback.dao.LoggedInUser
+import com.hibob.feedback.dao.LoggedInUser
 import jakarta.ws.rs.core.Cookie
 import org.springframework.stereotype.Component
 

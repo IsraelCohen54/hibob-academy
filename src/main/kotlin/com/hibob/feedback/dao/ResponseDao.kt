@@ -1,4 +1,4 @@
-package com.feedback.dao
+package com.hibob.feedback.dao
 
 import org.jooq.DSLContext
 import org.jooq.Record

@@ -18,6 +18,9 @@ class RequestValidatorTest {
 
     private val employeeFetcher: EmployeeFetcher = mock()
     private val requestValidator = RequestValidator(employeeFetcher)
+    private val userRequestValidator = UserRequestValidator()
+    private val employeeFetcher: EmployeeFetcher = mock()
+    private val requestValidator = RequestValidator(employeeFetcher)
 
     private companion object {
         private const val LEGIT_COMPANY_ID_NUM = 1L
@@ -30,6 +33,8 @@ class RequestValidatorTest {
     fun `validateCompanyId positive value positive`() {
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateLoginValue(
+            requestValidator.validateLoginValue(
+            userRequestValidator.validateLoginValue(
                 LoggedInUser(
                     companyId = NON_LEGIT_COMPANY_ID_NUM,
                     employeeId = LEGIT_EMPLOYEE_ID_NUM
@@ -46,6 +51,8 @@ class RequestValidatorTest {
     @Test
     fun `validateEmployeeId positive value positive`() {
         val exception = assertThrows<ResponseStatusException> {
+            requestValidator.validateLoginValue(
+            userRequestValidator.validateLoginValue(
             requestValidator.validateLoginValue(
                 LoggedInUser(
                     companyId = LEGIT_COMPANY_ID_NUM,
@@ -66,6 +73,8 @@ class RequestValidatorTest {
 
         val exception = assertThrows<ResponseStatusException> {
             requestValidator.validateCommentValue(blankComment)
+            userRequestValidator.validateCommentValue(blankComment)
+            requestValidator.validateCommentValue(blankComment)
         }
 
         val expectedMessage =
@@ -82,6 +91,8 @@ class RequestValidatorTest {
     fun `validateCommentValue throws exception if comment is too short`() {
         val shortComment = "Too short"
         val exception = assertThrows<ResponseStatusException> {
+            userRequestValidator.validateCommentValue(shortComment)
+            requestValidator.validateCommentValue(shortComment)
             requestValidator.validateCommentValue(shortComment)
         }
 
@@ -114,6 +125,51 @@ class RequestValidatorTest {
 
         assertEquals(HttpStatus.FORBIDDEN, exception.statusCode)
         assertEquals("Forbidden", exception.reason)
+    }
+
+    @Test
+    fun `validatePermission throws exception for non-admin or non-manager user`() {
+        val loggedInUser = LoggedInUser(companyId = 1L, employeeId = 1L)
+
+        whenever(employeeFetcher.getEmployeeDetails(loggedInUser)).thenReturn(
+            PersistedEmployee(
+                id = 1L,
+                firstName = "a",
+                lastName = "b",
+                role = RoleType.EMPLOYEE, department = DepartmentType.IT
+            )
+        )
+
+        val exception = assertThrows<ResponseStatusException> {
+            requestValidator.validatePermission(loggedInUser)
+        }
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.statusCode)
+        assertEquals("Forbidden", exception.reason)
+    }
+
+    @Test
+    fun `validateStatusUpdater should throw exception for feedbackId below threshold`() {
+        val statusUpdateRequest = StatusUpdateRequest(status = "reviewed", feedbackId = -1)
+
+        assertEquals(
+            "Feedback ID must be a positive number.",
+            assertThrows<IllegalArgumentException> {
+                requestValidator.validateStatusUpdater(statusUpdateRequest)
+            }.message
+        )
+    }
+
+    @Test
+    fun `validateStatusUpdater should throw exception for invalid status`() {
+        val statusUpdateRequest = StatusUpdateRequest(status = "invalid_status", feedbackId = 1)
+
+        assertEquals(
+            "Invalid status value: invalid_status",
+            assertThrows<IllegalArgumentException> {
+                requestValidator.validateStatusUpdater(statusUpdateRequest)
+            }.message
+        )
     }
 
     @Test
